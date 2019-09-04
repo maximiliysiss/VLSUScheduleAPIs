@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLSUScheduleAPI", "VLSUScheduleAPIs\VLSUScheduleAPI.csproj", "{90743FA2-D260-4E2F-A3B3-1EC204A67950}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationAPI", "IntegrationAPI\IntegrationAPI.csproj", "{B37CE08E-2A59-4E5C-853B-FD50B8D697B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90743FA2-D260-4E2F-A3B3-1EC204A67950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90743FA2-D260-4E2F-A3B3-1EC204A67950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90743FA2-D260-4E2F-A3B3-1EC204A67950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90743FA2-D260-4E2F-A3B3-1EC204A67950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B37CE08E-2A59-4E5C-853B-FD50B8D697B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B37CE08E-2A59-4E5C-853B-FD50B8D697B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B37CE08E-2A59-4E5C-853B-FD50B8D697B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B37CE08E-2A59-4E5C-853B-FD50B8D697B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8AB40EA4-239A-450E-B7BA-E87DBA3D2B11}
+	EndGlobalSection
+EndGlobal
