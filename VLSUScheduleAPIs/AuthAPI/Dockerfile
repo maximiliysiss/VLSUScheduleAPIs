@@ -5,4 +5,4 @@ WORKDIR /Services/
 
 CMD dotnet build
 
-ENTRYPOINT [ "/bin/Debug/netcore2.2/VLSUScheduleAPI.dll" ]
+ENTRYPOINT [ "/bin/Debug/netcore2.2/AuthAPI.dll" ]

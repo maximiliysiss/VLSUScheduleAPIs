@@ -1,0 +1,71 @@
+version: '3'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  AuthAPI:
+    image: AuthAPI
+    build:
+      context: ./AuthAPI
+      dockerfile: Dockerfile
+    ports:
+      - 8000:80
+    volumes:
+      - ./AuthAPI/bin/pub/:/app
+    container_name: AuthAPI
+    depends_on:
+#      - sql.data
+      - rabbitmq
+  
+  VLSUScheduleAPI:
+    image: VLSUScheduleAPIs
+    build:
+      context: ./VLSUScheduleAPIs
+      dockerfile: Dockerfile
+    ports:
+      - 8001:80
+    volumes:
+      - ./VLSUScheduleAPIs/bin/pub/:/app
+    container_name: VLSUScheduleAPIs
+    depends_on:
+#      - sql.data
+      - rabbitmq
+
+  IntegrationAPI:
+    image: IntegrationAPI
+    build:
+      context: ./IntegrationAPI
+      dockerfile: Dockerfile
+    ports:
+      - 8002:80
+    volumes:
+      - ./IntegrationAPI/bin/pub/:/app
+    container_name: IntegrationAPI
+    depends_on:
+#      - sql.data
+      - rabbitmq
+
+  # sql.data:
+  #   image: mssql-linux
+  #   build:
+  #     context: ./Database
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5433:1433"
+  #   container_name: mssql-linux
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+    container_name: rabbitmq
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-tier
+  
