@@ -1,8 +1,9 @@
-FROM microsoft/aspnetcore
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM microsoft/dotnet:2.2-sdk
 
-COPY . /Services/
-WORKDIR /Services/
+COPY . /Services/IntegrationAPI/
+WORKDIR /Services/IntegrationAPI/IntegrationAPI
 
-CMD dotnet build
+RUN dotnet publish -o /bin/pub/
 
-ENTRYPOINT [ "/bin/Debug/netcoreapp2.2/IntegrationAPI.dll" ]
+ENTRYPOINT [ "dotnet" ,"/bin/pub/IntegrationAPI.dll" ]

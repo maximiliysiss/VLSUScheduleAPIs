@@ -1,8 +1,9 @@
-FROM microsoft/aspnetcore:2.2
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM microsoft/dotnet:2.2-sdk
 
-COPY . /Services/
-WORKDIR /Services/
+COPY . /Services/AuthAPI/
+WORKDIR /Services/AuthAPI/AuthAPI
 
-CMD dotnet build
+RUN dotnet publish -o /bin/pub/
 
-ENTRYPOINT [ "/bin/Debug/netcore2.2/AuthAPI.dll" ]
+ENTRYPOINT [ "dotnet" ,"/bin/pub/AuthAPI.dll" ]

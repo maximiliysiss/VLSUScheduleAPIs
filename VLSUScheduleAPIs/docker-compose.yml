@@ -1,12 +1,8 @@
-version: '3'
-
-networks:
-  app-tier:
-    driver: bridge
+version: "3"
 
 services:
   AuthAPI:
-    image: AuthAPI
+    image: authpi
     build:
       context: ./AuthAPI
       dockerfile: Dockerfile
@@ -15,12 +11,12 @@ services:
     volumes:
       - ./AuthAPI/bin/pub/:/app
     container_name: AuthAPI
-    depends_on:
-#      - sql.data
-      - rabbitmq
-  
+  #  depends_on:
+  #      - sql.data
+  #- rabbitmq
+
   VLSUScheduleAPI:
-    image: VLSUScheduleAPIs
+    image: vlsuscheduleapis
     build:
       context: ./VLSUScheduleAPIs
       dockerfile: Dockerfile
@@ -29,12 +25,12 @@ services:
     volumes:
       - ./VLSUScheduleAPIs/bin/pub/:/app
     container_name: VLSUScheduleAPIs
-    depends_on:
-#      - sql.data
-      - rabbitmq
+  #  depends_on:
+  #      - sql.data
+  #- rabbitmq
 
   IntegrationAPI:
-    image: IntegrationAPI
+    image: integrationapi
     build:
       context: ./IntegrationAPI
       dockerfile: Dockerfile
@@ -43,29 +39,21 @@ services:
     volumes:
       - ./IntegrationAPI/bin/pub/:/app
     container_name: IntegrationAPI
-    depends_on:
+#    depends_on:
 #      - sql.data
-      - rabbitmq
+# - rabbitmq
 
-  # sql.data:
-  #   image: mssql-linux
-  #   build:
-  #     context: ./Database
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5433:1433"
-  #   container_name: mssql-linux
+# sql.data:
+#   image: mssql-linux
+#   build:
+#     context: ./Database
+#     dockerfile: Dockerfile
+#   ports:
+#     - "5433:1433"
+#   container_name: mssql-linux
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "15672:15672"
-    container_name: rabbitmq
-
-  redis:
-    image: bitnami/redis:latest
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - app-tier
-  
+# rabbitmq:
+#   image: rabbitmq:3-management
+#   ports:
+#     - "15672:15672"
+#   container_name: rabbitmq
