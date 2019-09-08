@@ -1,10 +1,10 @@
-﻿using CommonLibrary.Models;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Commonlibrary.Models;
 
 namespace AuthAPI.Services
 {
@@ -14,6 +14,13 @@ namespace AuthAPI.Services
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Teacher> Teachers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Ignore<Group>();
+            modelBuilder.Ignore<IllCard>();
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CommonLibrary.Models
+﻿namespace Commonlibrary.Models
 {
     public class Group
     {

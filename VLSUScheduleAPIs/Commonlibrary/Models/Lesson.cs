@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommonLibrary.Models
+namespace Commonlibrary.Models
 {
     public class Lesson
     {
