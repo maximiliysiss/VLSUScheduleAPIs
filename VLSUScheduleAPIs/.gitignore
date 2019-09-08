@@ -4,3 +4,4 @@ obj/
 IntegrationAPI/Commonlibrary/
 VLSUScheduleAPIs/Commonlibrary/
 AuthAPI/Commonlibrary/
+Migrations/

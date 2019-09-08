@@ -6,4 +6,4 @@ WORKDIR /Services/VLSUScheduleAPI/VLSUScheduleAPIs
 
 RUN dotnet publish -o /bin/pub/
 
-ENTRYPOINT [ "dotnet" ,"/bin/pub/VLSUScheduleAPI.dll" ]
+ENTRYPOINT [ "dotnet" ,"/bin/pub/VLSUScheduleAPIs.dll" ]

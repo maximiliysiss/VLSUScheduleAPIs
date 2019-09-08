@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+  APIsGateWays:
+    image: apisgateways
+    build:
+      context: ./APIsGateWays
+      dockerfile: Dockerfile
+    ports:
+      - 7000:80
+    volumes:
+      - ./APIsGateWays/bin/pub:/app
+    container_name: APIsGateWays
+    depends_on:
+      - sql.data
+
   AuthAPI:
     image: authpi
     build:
@@ -11,8 +24,8 @@ services:
     volumes:
       - ./AuthAPI/bin/pub/:/app
     container_name: AuthAPI
-  #  depends_on:
-  #      - sql.data
+    depends_on:
+      - sql.data
   #- rabbitmq
 
   VLSUScheduleAPI:
@@ -25,8 +38,8 @@ services:
     volumes:
       - ./VLSUScheduleAPIs/bin/pub/:/app
     container_name: VLSUScheduleAPIs
-  #  depends_on:
-  #      - sql.data
+    depends_on:
+      - sql.data
   #- rabbitmq
 
   IntegrationAPI:
@@ -39,19 +52,18 @@ services:
     volumes:
       - ./IntegrationAPI/bin/pub/:/app
     container_name: IntegrationAPI
-#    depends_on:
-#      - sql.data
-# - rabbitmq
+    depends_on:
+      - sql.data
+    # - rabbitmq
 
-# sql.data:
-#   image: mssql-linux
-#   build:
-#     context: ./Database
-#     dockerfile: Dockerfile
-#   ports:
-#     - "5433:1433"
-#   container_name: mssql-linux
-
+  sql.data:
+    image: mssql-linux
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    ports:
+      - "5433:1433"
+    container_name: mssql-linux
 # rabbitmq:
 #   image: rabbitmq:3-management
 #   ports:

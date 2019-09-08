@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Ocelot;
 
 namespace APIsGateWays
 {
@@ -19,6 +20,9 @@ namespace APIsGateWays
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .ConfigureAppConfiguration((x, c) =>
+            {
+                c.AddJsonFile("ocelot.json");
+            }).UseStartup<Startup>();
     }
 }
