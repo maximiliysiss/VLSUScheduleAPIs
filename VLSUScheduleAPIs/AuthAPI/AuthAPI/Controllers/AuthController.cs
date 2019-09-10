@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using AuthAPI.Models;
 using AuthAPI.Services;
+using Commonlibrary.Models;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace AuthAPI.Controllers
 {
@@ -28,6 +31,11 @@ namespace AuthAPI.Controllers
         public bool IsAuthorize()
         {
             return true;
+        }
+
+        public List<Student> Students()
+        {
+            return databaseContext.Students.ToList();
         }
     }
 }
