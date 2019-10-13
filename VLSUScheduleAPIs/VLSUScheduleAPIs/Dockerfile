@@ -5,5 +5,6 @@ COPY . /Services/VLSUScheduleAPI/
 WORKDIR /Services/VLSUScheduleAPI/VLSUScheduleAPIs
 
 RUN dotnet publish -o /bin/pub/
+RUN dotnet ef migrations add Init
 
 ENTRYPOINT [ "dotnet" ,"/bin/pub/VLSUScheduleAPIs.dll" ]

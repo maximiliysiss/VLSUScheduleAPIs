@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using AuthAPI.Models;
+﻿using AuthAPI.Models;
 using AuthAPI.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Controllers
 {
@@ -8,26 +8,35 @@ namespace AuthAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        DatabaseContext databaseContext;
+        private readonly IAuthService authService;
 
-        public AuthController(DatabaseContext database)
+        public AuthController(IAuthService authService)
         {
-            this.databaseContext = database;
+            this.authService = authService;
         }
 
-        public TokenServiceResult Login()
+        [HttpPost]
+        public ActionResult<TokenResult> Login(LoginModel loginModel)
         {
-            return new TokenServiceResult();
+            var loginResult = authService.AuthAttempt(loginModel);
+            if (loginResult == null)
+                return NotFound();
+            return loginResult;
         }
 
-        public TokenServiceResult Register()
+        [HttpGet]
+        public ActionResult<TokenResult> Refresh()
         {
-            return new TokenServiceResult();
-        }
+            var token = Request.Headers["token"];
+            var refreshToken = Request.Headers["refresh"];
+            if (token.Count != 1 || refreshToken.Count != 1)
+                return BadRequest();
 
-        public bool IsAuthorize()
-        {
-            return true;
+            var refreshResult = authService.RefreshToken(token[0] ?? string.Empty, refreshToken[0] ?? string.Empty);
+            if (refreshResult == null)
+                return BadRequest();
+
+            return refreshResult;
         }
     }
 }
