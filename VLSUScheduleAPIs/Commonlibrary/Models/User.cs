@@ -18,5 +18,6 @@ namespace Commonlibrary.Models
         public DateTime LastActiveDateTime { get; set; }
         public string Login { get; set; }
         public UserType UserType { get; set; }
+        public string Token { get; set; }
     }
 }
