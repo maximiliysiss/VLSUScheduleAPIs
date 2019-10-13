@@ -1,21 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using AuthAPI.Models;
+﻿using AuthAPI.Models;
 using AuthAPI.Services;
-using Commonlibrary.Models;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Principal;
-using System.Text;
-using Commonlibrary.Controllers;
-using System.Security.Claims;
-using System;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Controllers
 {
@@ -23,67 +8,35 @@ namespace AuthAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        DatabaseContext databaseContext;
-        TokenManagement tokenManagement;
+        private readonly IAuthService authService;
 
-        public AuthController(DatabaseContext database, TokenManagement tokenManagement)
+        public AuthController(IAuthService authService)
         {
-            this.databaseContext = database;
-            this.tokenManagement = tokenManagement;
+            this.authService = authService;
         }
 
-        public async Task Token(string username)
+        [HttpPost]
+        public ActionResult<TokenResult> Login(LoginModel loginModel)
         {
-            var identity = GetIdentity(username);
-            if (identity == null)
-            {
-                Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
-                return;
-            }
-
-            var jwt = new JwtSecurityToken(
-                    issuer: tokenManagement.Issuer,
-                    audience: tokenManagement.Audience,
-                    notBefore: DateTime.Now,
-                    claims: identity.Claims,
-                    expires: DateTime.Now.Add(TimeSpan.FromMinutes(tokenManagement.RefreshExpiration)),
-                    signingCredentials: new SigningCredentials(tokenManagement.SymmetricKey, SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
-
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            var loginResult = authService.AuthAttempt(loginModel);
+            if (loginResult == null)
+                return NotFound();
+            return loginResult;
         }
 
-        private ClaimsIdentity GetIdentity(string username)
+        [HttpGet]
+        public ActionResult<TokenResult> Refresh()
         {
-            User person = databaseContext.Users.FirstOrDefault(x => x.Login == username);
-            if (person != null)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.UserType.ToString())
-                };
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
-            }
+            var token = Request.Headers["token"];
+            var refreshToken = Request.Headers["refresh"];
+            if (token.Count != 1 || refreshToken.Count != 1)
+                return BadRequest();
 
-            return null;
-        }
+            var refreshResult = authService.RefreshToken(token[0] ?? string.Empty, refreshToken[0] ?? string.Empty);
+            if (refreshResult == null)
+                return BadRequest();
 
-        [Authorize]
-        public string Test()
-        {
-            return "Hello world!";
+            return refreshResult;
         }
     }
 }

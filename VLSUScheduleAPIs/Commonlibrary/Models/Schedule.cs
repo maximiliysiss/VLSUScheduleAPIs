@@ -16,6 +16,5 @@ namespace Commonlibrary.Models
         public int SubGroup { get; set; }
         public DateTime Time { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
-        public bool IsOdd { get; set; }
     }
 }

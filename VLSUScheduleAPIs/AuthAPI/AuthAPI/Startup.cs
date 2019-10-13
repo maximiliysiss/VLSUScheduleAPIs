@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AuthAPI.Services;
-using Commonlibrary.Controllers;
+﻿using AuthAPI.Services;
+using Commonlibrary.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -44,22 +37,20 @@ namespace AuthAPI
                 });
             });
 
-            services.Configure<TokenManagement>(Configuration.GetSection("tokenManagement"));
-            var token = Configuration.GetSection("tokenManagement").Get<TokenManagement>();
-            services.AddSingleton<TokenManagement>(token);
-            var secret = Encoding.ASCII.GetBytes(token.Secret);
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthorizeSettings>();
+            services.AddSingleton(authSettings);
+            services.AddTransient<IAuthService, AuthService>();
 
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
             {
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = token.SymmetricKey,
-                    ValidIssuer = token.Issuer
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidAudience = authSettings.Audience,
+                    ValidIssuer = authSettings.Issuer,
+                    IssuerSigningKey = authSettings.SecurityKey
                 };
             });
         }
@@ -72,14 +63,13 @@ namespace AuthAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
             app.UseAuthentication();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthAPI");
             });
+            app.UseMvc();
         }
     }
 }
