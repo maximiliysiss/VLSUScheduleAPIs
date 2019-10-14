@@ -7,6 +7,8 @@ namespace Commonlibrary.Models
     public class Schedule
     {
         public int ID { get; set; }
+        public int AuditoryId { get; set; }
+        public Auditory Auditory { get; set; }
         public int LessonId { get; set; }
         public Lesson Lesson { get; set; }
         public int TeacherId { get; set; }
