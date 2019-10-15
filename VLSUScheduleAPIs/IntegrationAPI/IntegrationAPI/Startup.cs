@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Swashbuckle.AspNetCore.Swagger;
+using Consul;
+using VLSUScheduleAPIs.Services;
+using Commonlibrary.Services.Settings;
 
 namespace IntegrationAPI
 {
@@ -26,6 +23,8 @@ namespace IntegrationAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IServiceConnectionFactory, RabbitMQServiceConnectionFactory>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
@@ -37,6 +36,14 @@ namespace IntegrationAPI
                     Description = "VLSUScheduleApi"
                 });
             });
+
+            var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
+
+            services.AddSingleton(consulSettings);
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            {
+                consulConfig.Address = new Uri(consulSettings.Adress);
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

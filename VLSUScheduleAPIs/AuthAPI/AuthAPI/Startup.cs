@@ -1,5 +1,5 @@
 ﻿using AuthAPI.Services;
-using Commonlibrary.Services;
+using Commonlibrary.Services.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

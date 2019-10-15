@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using VLSUScheduleAPIs.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace VLSUScheduleAPIs.Controllers
 {
@@ -17,8 +18,9 @@ namespace VLSUScheduleAPIs.Controllers
     public class AuditoriesController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly IServiceConnection serviceConnection;
 
-        public AuditoriesController(DatabaseContext context)
+        public AuditoriesController(DatabaseContext context, IServiceConnectionFactory factory, ILogger logger)
         {
             _context = context;
         }

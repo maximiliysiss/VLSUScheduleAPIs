@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Commonlibrary.Services
+namespace Commonlibrary.Services.Settings
 {
     public class AuthorizeSettings
     {

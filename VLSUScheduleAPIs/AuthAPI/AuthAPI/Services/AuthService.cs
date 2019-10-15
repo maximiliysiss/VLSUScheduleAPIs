@@ -1,11 +1,7 @@
 ﻿using AuthAPI.Models;
 using Commonlibrary.Models;
-using Commonlibrary.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Commonlibrary.Services.Settings;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;

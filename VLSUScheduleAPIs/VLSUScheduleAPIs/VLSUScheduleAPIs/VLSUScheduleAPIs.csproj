@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Commonlibrary\Commonlibrary.csproj" />
+    <ProjectReference Include="..\..\ControllerCommon\ControllerCommon.csproj" />
   </ItemGroup>
 </Project>
