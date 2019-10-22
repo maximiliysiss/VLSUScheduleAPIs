@@ -8,7 +8,7 @@ namespace NetServiceConnection.NetContext
 {
     public class NetContextFactory
     {
-        public ConcurrentDictionary<string, NetContext> contexts = new ConcurrentDictionary<string, NetContext>;
+        public ConcurrentDictionary<string, NetContext> contexts = new ConcurrentDictionary<string, NetContext>();
 
         public NetContextFactory Configure(NetSettings netSettings)
         {

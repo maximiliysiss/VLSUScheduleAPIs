@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+WORKDIR /src
+COPY ["VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj", "VLSUScheduleAPIs/VLSUScheduleAPIs/"]
+COPY ["Commonlibrary/Commonlibrary.csproj", "Commonlibrary/"]
+COPY ["ControllerCommon/ControllerCommon.csproj", "ControllerCommon/"]
+RUN dotnet restore "VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj"
+COPY . .
+WORKDIR "/src/VLSUScheduleAPIs/VLSUScheduleAPIs"
+RUN dotnet build "VLSUScheduleAPIs.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "VLSUScheduleAPIs.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "VLSUScheduleAPIs.dll"]
