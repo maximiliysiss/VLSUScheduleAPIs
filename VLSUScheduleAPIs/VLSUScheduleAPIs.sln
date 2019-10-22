@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIsGateWays", "APIsGateWay
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAPI", "AuthAPI\AuthAPI\AuthAPI.csproj", "{22F88195-F97D-459A-8737-A113487E6A29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerCommon", "ControllerCommon\ControllerCommon.csproj", "{F037A8A7-7F4C-459A-A83E-31FB4529581B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerCommon", "ControllerCommon\ControllerCommon.csproj", "{F037A8A7-7F4C-459A-A83E-31FB4529581B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetServiceConnection", "NetServiceConnection\NetServiceConnection.csproj", "{ADC0AF61-5838-4E74-B15F-4743102DBF78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{F037A8A7-7F4C-459A-A83E-31FB4529581B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F037A8A7-7F4C-459A-A83E-31FB4529581B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F037A8A7-7F4C-459A-A83E-31FB4529581B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC0AF61-5838-4E74-B15F-4743102DBF78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC0AF61-5838-4E74-B15F-4743102DBF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC0AF61-5838-4E74-B15F-4743102DBF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC0AF61-5838-4E74-B15F-4743102DBF78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

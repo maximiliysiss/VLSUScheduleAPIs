@@ -42,7 +42,7 @@ namespace IntegrationAPI
             services.AddSingleton(consulSettings);
             services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
             {
-                consulConfig.Address = new Uri(consulSettings.Adress);
+                consulConfig.Address = new Uri(consulSettings.Address);
             }));
         }
 

@@ -1,22 +1,30 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Commonlibrary.Service;
+using ControllerCommon.Services;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace VLSUScheduleAPIs.Services
 {
-    public interface IServiceConnection
+    public interface IServiceConnection : IDisposable
     {
         void Init();
         void SendEventToChannel<T>(T ev);
+        void RegisterConsumer<T>(Action<T> action);
+        void BackwayConsumer<T>(string route, Func<T> data, IServiceConnectionFactory factory);
+        void BackwayConsumer<T, R>(string route, Func<R, T> data, IServiceConnectionFactory factory);
+        Task<List<T>> LoadModels<T>(Action<List<T>> handler);
+        Task<T> LoadById<T>(int id);
     }
 
-    public class RabbitService : IServiceConnection, IDisposable
+    public class RabbitService : IServiceConnection
     {
         private readonly string topic;
         private readonly string host;
@@ -64,6 +72,7 @@ namespace VLSUScheduleAPIs.Services
         public void RegisterConsumer<T>(Action<T> action)
         {
             var queueName = channel.QueueDeclare().QueueName;
+            channel.BasicQos(0, 1, false);
             foreach (var bindingKey in routingKeys)
             {
                 channel.QueueBind(queue: queueName,
@@ -74,13 +83,48 @@ namespace VLSUScheduleAPIs.Services
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
-                var body = Encoding.UTF8.GetString(ea.Body);
-                logger.LogInformation($"Receive RabbitMQ Service Host:{host}, topic:{topic}, message:{body}");
-                action(JsonConvert.DeserializeObject<T>(body));
+                try
+                {
+                    var body = Encoding.UTF8.GetString(ea.Body);
+                    logger.LogInformation($"Receive RabbitMQ Service Host:{host}, topic:{topic}, message:{body}");
+                    action(JsonConvert.DeserializeObject<T>(body));
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, ex.Message);
+                }
             };
             channel.BasicConsume(queue: queueName,
                                  autoAck: true,
                                  consumer: consumer);
+        }
+
+        public Task<List<T>> LoadModels<T>(Action<List<T>> handler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> LoadById<T>(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BackwayConsumer<T>(string route, Func<T> data, IServiceConnectionFactory factory)
+        {
+            RegisterConsumer<BackrouteEvent>(x =>
+            {
+                using (var connectionBack = factory.Create(x.Name, $"{topic}:{route}"))
+                    connectionBack.SendEventToChannel(data());
+            });
+        }
+
+        public void BackwayConsumer<T, R>(string route, Func<R, T> data, IServiceConnectionFactory factory)
+        {
+            RegisterConsumer<BackrouteEventWithArg<R>>(x =>
+            {
+                using (var connectionBack = factory.Create(x.Name, $"rabbit:{x.Name}:{route}"))
+                    connectionBack.SendEventToChannel(data(x.Arg));
+            });
         }
     }
 }

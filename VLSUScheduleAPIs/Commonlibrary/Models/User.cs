@@ -10,7 +10,8 @@ namespace Commonlibrary.Models
     {
         Teacher,
         Student,
-        Integration
+        Integration,
+        Service
     }
 
     public class User
