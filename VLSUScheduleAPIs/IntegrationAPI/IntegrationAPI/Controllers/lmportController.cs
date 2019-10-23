@@ -2,15 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace IntegrationAPI.Controllers
 {
-    public class lmportController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ImportController : ControllerBase
     {
-        public IActionResult Index()
+        ILogger logger;
+
+        public ImportController(ILogger logger)
         {
-            return View();
+            this.logger = logger;
+        }
+
+        [HttpPost("excel")]
+        public ActionResult UploadScheduleExcel(IFormFile file)
+        {
+            if (file.Length == 0)
+                return BadRequest();
+
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("json")]
+        public ActionResult UploadScheduleJson()
+        {
+            return Ok();
+        }
+
+        [HttpPost("xml")]
+        public ActionResult UploadScheduleXML()
+        {
+            return Ok();
         }
     }
 }

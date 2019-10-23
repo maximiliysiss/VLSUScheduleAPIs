@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using VLSUScheduleAPIs.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AuthorizeAttribute(Roles = "Teacher, Service")]
     public class IllCardsController : ControllerBase
     {
         private readonly DatabaseContext _context;

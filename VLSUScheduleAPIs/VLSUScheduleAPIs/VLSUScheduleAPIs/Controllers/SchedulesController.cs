@@ -13,7 +13,7 @@ namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeAttribute(Roles = "Integration")]
+    [AuthorizeAttribute(Roles = "Service")]
     public class SchedulesController : ControllerBase
     {
         private readonly DatabaseContext _context;

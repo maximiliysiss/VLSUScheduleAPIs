@@ -1,5 +1,6 @@
 ﻿using AuthAPI.Models;
 using AuthAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Controllers
@@ -38,5 +39,8 @@ namespace AuthAPI.Controllers
 
             return refreshResult;
         }
+
+        [Authorize]
+        public ActionResult Try() => Ok();
     }
 }

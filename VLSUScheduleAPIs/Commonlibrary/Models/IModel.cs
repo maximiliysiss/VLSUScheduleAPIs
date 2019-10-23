@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Commonlibrary.Models
 {
-    public class Auditory: IModel
+    public interface IModel
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
+        int ID { get; set; }
     }
 }

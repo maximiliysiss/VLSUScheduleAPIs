@@ -2,7 +2,7 @@
 
 namespace Commonlibrary.Models
 {
-    public class IllCard
+    public class IllCard: IModel
     {
         public int ID { get; set; }
         public DateTime Date { get; set; }
