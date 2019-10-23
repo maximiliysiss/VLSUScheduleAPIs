@@ -63,10 +63,6 @@ namespace VLSUScheduleAPIs
             });
 
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
-            var rabbitSettings = Configuration.GetSection("rabbit").Get<RabbitSettings>();
-
-            services.AddSingleton(rabbitSettings);
-            services.AddTransient<IServiceConnectionFactory, RabbitMQServiceConnectionFactory>();
             services.AddTransient<IConsulWrapper, ConsulWrapper>();
 
             services.AddSingleton(consulSettings);

@@ -13,6 +13,7 @@ namespace NetServiceConnection.NetContext
         private readonly IConsulClient consulClient;
         private readonly List<Transaction> transactions = new List<Transaction>();
         private Dictionary<string, string> addresses = new Dictionary<string, string>();
+        private readonly IServiceProvider serviceProvider;
 
         public readonly string contextTag = "netcontext:";
         public readonly Type type;
@@ -20,10 +21,11 @@ namespace NetServiceConnection.NetContext
 
         public void AddTransaction(Transaction transaction) => transactions.Add(transaction);
 
-        public NetContext(IConsulClient consulClient)
+        public NetContext(IConsulClient consulClient, IServiceProvider serviceProvider)
         {
             this.consulClient = consulClient;
             this.type = this.GetType();
+            this.serviceProvider = serviceProvider;
         }
 
         public async virtual void OnConfiguration()
@@ -47,7 +49,9 @@ namespace NetServiceConnection.NetContext
             {
                 try
                 {
-                    property.SetValue(this, Activator.CreateInstance(property.PropertyType, this, addresses[property.Name.ToLower()]));
+                    var genericType = typeof(INetworkAccess<>);
+                    var innerGeneric = property.PropertyType.GenericTypeArguments[0];
+                    property.SetValue(this, Activator.CreateInstance(property.PropertyType, addresses[property.Name.ToLower()], serviceProvider.GetService(genericType.MakeGenericType(innerGeneric))));
                 }
                 catch (System.Exception)
                 {

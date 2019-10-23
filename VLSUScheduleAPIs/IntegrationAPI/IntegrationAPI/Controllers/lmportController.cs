@@ -29,7 +29,7 @@ namespace IntegrationAPI.Controllers
             {
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest();
             }

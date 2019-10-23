@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Consul;
-using VLSUScheduleAPIs.Services;
 using Commonlibrary.Services.Settings;
 
 namespace IntegrationAPI
@@ -23,8 +22,6 @@ namespace IntegrationAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IServiceConnectionFactory, RabbitMQServiceConnectionFactory>();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>

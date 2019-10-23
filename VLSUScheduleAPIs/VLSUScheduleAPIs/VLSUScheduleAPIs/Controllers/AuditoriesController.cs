@@ -10,7 +10,6 @@ using VLSUScheduleAPIs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Commonlibrary.Services.Settings;
-using Commonlibrary.Service;
 using Microsoft.AspNetCore.Mvc.Internal;
 using System.Collections;
 
@@ -22,20 +21,10 @@ namespace VLSUScheduleAPIs.Controllers
     public class AuditoriesController : ControllerBase
     {
         private readonly DatabaseContext _context;
-        private readonly IServiceConnection rabbitOnCreate;
-        private readonly IServiceConnection rabbitOnEdit;
-        private readonly IServiceConnection rabbitOnSelectAll;
 
-        public AuditoriesController(DatabaseContext context, IServiceConnectionFactory factory, RabbitSettings rabbitSettings)
+        public AuditoriesController(DatabaseContext context)
         {
             _context = context;
-            rabbitOnCreate = factory.Create(rabbitSettings.Topic, "rabbit:auditory:create");
-            rabbitOnEdit = factory.Create(rabbitSettings.Topic, "rabbit:auditory:edit");
-            rabbitOnSelectAll = factory.Create(rabbitSettings.Topic, "rabbit:auditory:all");
-            rabbitOnCreate.RegisterConsumer<Auditory>(async x => await PostAuditory(x));
-            rabbitOnEdit.RegisterConsumer<Auditory>(async x => await PutAuditory(x.ID, x));
-            rabbitOnSelectAll.BackwayConsumer("loadall", () => GetAuditories().Result.Value, factory);
-            rabbitOnSelectAll.BackwayConsumer<Auditory, int>("load", (x) => GetAuditory(x).Result.Value, factory);
         }
 
         // GET: api/Auditories

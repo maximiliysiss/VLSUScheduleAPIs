@@ -25,6 +25,7 @@ namespace VLSUScheduleAPIs.Controllers
         public async Task<ActionResult<List<Schedule>>> GetSchedules(Filter[] filters = null)
         {
             var data = context.Schedules.ToList();
+            return null;
         }
     }
 }
