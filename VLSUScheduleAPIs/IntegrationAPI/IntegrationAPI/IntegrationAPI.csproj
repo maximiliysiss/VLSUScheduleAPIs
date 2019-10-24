@@ -18,12 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Commonlibrary\Commonlibrary.csproj" />
     <ProjectReference Include="..\..\ControllerCommon\ControllerCommon.csproj" />
+    <ProjectReference Include="..\..\NetServiceConnection\NetServiceConnection.csproj" />
   </ItemGroup>
 
 </Project>

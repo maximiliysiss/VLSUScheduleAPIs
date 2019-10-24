@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Consul;
 using Commonlibrary.Services.Settings;
+using NetServiceConnection.NetContext;
+using IntegrationAPI.Services;
+using Commonlibrary.Controllers;
 
 namespace IntegrationAPI
 {
@@ -24,6 +27,8 @@ namespace IntegrationAPI
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -37,6 +42,8 @@ namespace IntegrationAPI
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
 
             services.AddSingleton(consulSettings);
+            services.AddSingleton(typeof(INetworkModelAccess<>), typeof(HttpLoad<>));
+            services.AddTransient<VlsuContext>();
             services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
             {
                 consulConfig.Address = new Uri(consulSettings.Address);
@@ -44,19 +51,22 @@ namespace IntegrationAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "VLSUScheduleApi");
             });
+
+            app.RegisterWithConsul(applicationLifetime);
+            app.UseMvc();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Consul;
+using NetServiceConnection.NetAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -11,21 +13,50 @@ namespace NetServiceConnection.NetContext
     public abstract class NetContext
     {
         private readonly IConsulClient consulClient;
-        private readonly List<Transaction> transactions = new List<Transaction>();
-        private Dictionary<string, string> addresses = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> addresses = new Dictionary<string, string>();
         private readonly IServiceProvider serviceProvider;
+        public List<Action<HttpClient>> preHeader;
+        public bool isLazy = false;
 
-        public readonly string contextTag = "netcontext:";
+        public static readonly string contextTag = "netcontext:";
         public readonly Type type;
         public List<PropertyInfo> propertyInfos;
 
-        public void AddTransaction(Transaction transaction) => transactions.Add(transaction);
+        private Action<object> CreateLazy(Type type)
+        {
+            var props = type.GetProperties().Select(x => new { Prop = x, Attr = x.GetCustomAttributes(typeof(LazyNetLoad), false).OfType<LazyNetLoad>().ToArray() })
+                .Where(x => x.Attr.Length > 0 && addresses.ContainsKey(x.Attr[0].Service));
+            return (x) =>
+            {
+                foreach (var prop in props)
+                {
+                    var lazyData = prop.Attr[0];
+                    var propLazy = type.GetProperty(lazyData.Id);
+                    var netSet = CreateNetSet(lazyData.Service, propLazy.PropertyType);
+                    var getMethod = netSet.GetType().GetMethod("Get");
+                    propLazy.SetValue(x, getMethod.Invoke(netSet, new[] { prop.Prop.GetValue(x) }));
+                }
+            };
+        }
 
         public NetContext(IConsulClient consulClient, IServiceProvider serviceProvider)
         {
             this.consulClient = consulClient;
             this.type = this.GetType();
             this.serviceProvider = serviceProvider;
+
+            OnConfiguration();
+        }
+
+        public object CreateNetSet(string name, Type type)
+        {
+            var genericType = typeof(INetworkModelAccess<>);
+            var networkService = serviceProvider.GetService(genericType.MakeGenericType(type));
+            var networkConstructor = networkService as INetworkConstructor;
+            if (isLazy)
+                networkConstructor.ModelWorker.Add(CreateLazy(type));
+            networkConstructor.PreHeader = preHeader;
+            return Activator.CreateInstance(typeof(NetSet<>).MakeGenericType(type), addresses[name.ToLower()], networkService);
         }
 
         public async virtual void OnConfiguration()
@@ -44,14 +75,13 @@ namespace NetServiceConnection.NetContext
                 }
             }
 
-            propertyInfos = this.type.GetProperties().Where(x => x.PropertyType.IsGenericType && x.PropertyType == typeof(NetSet<>)).ToList();
+            propertyInfos = this.type.GetProperties()
+                .Where(x => x.PropertyType.IsGenericType && x.PropertyType.Assembly.FullName == typeof(NetSet<>).Assembly.FullName).ToList();
             foreach (var property in propertyInfos)
             {
                 try
                 {
-                    var genericType = typeof(INetworkAccess<>);
-                    var innerGeneric = property.PropertyType.GenericTypeArguments[0];
-                    property.SetValue(this, Activator.CreateInstance(property.PropertyType, addresses[property.Name.ToLower()], serviceProvider.GetService(genericType.MakeGenericType(innerGeneric))));
+                    property.SetValue(this, CreateNetSet(property.Name, property.PropertyType.GetGenericArguments()[0]));
                 }
                 catch (System.Exception)
                 {

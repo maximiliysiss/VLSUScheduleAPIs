@@ -18,10 +18,10 @@ namespace NetServiceConnection.NetContext
     public class NetSet<T> : IEnumerable<T>, ITransactionContains where T : IModel
     {
         private readonly string address;
-        private readonly INetworkAccess<T> networkLoad;
+        private readonly INetworkModelAccess<T> networkLoad;
         public List<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-        public NetSet(string address, INetworkAccess<T> networkLoad)
+        public NetSet(string address, INetworkModelAccess<T> networkLoad)
         {
             this.address = address;
             this.networkLoad = networkLoad;
@@ -40,6 +40,8 @@ namespace NetServiceConnection.NetContext
             var prev = networkLoad.Get(address, item.ID).Result;
             Transactions.Add(new UpdateTransaction<T>(address, item, prev, networkLoad));
         }
+
+        public T Get(int id) => networkLoad.Get(address, id).Result;
 
         public void Remove(T item) => Transactions.Add(new DeleteTransaction<T>(address, item, networkLoad));
     }

@@ -15,7 +15,7 @@ namespace NetServiceConnection.NetContext
     {
         private int id;
 
-        public AddTransaction(string address, T item, INetworkAccess<T> networkLoad)
+        public AddTransaction(string address, T item, INetworkModelAccess<T> networkLoad)
         {
             Action = async () =>
             {
@@ -28,7 +28,7 @@ namespace NetServiceConnection.NetContext
 
     public class DeleteTransaction<T> : Transaction where T : IModel
     {
-        public DeleteTransaction(string address, T item, INetworkAccess<T> networkLoad)
+        public DeleteTransaction(string address, T item, INetworkModelAccess<T> networkLoad)
         {
             Action = () => networkLoad.Delete(address, item.ID);
             Rollback = async () =>
@@ -41,7 +41,7 @@ namespace NetServiceConnection.NetContext
 
     public class UpdateTransaction<T> : Transaction where T : IModel
     {
-        public UpdateTransaction(string address, T item, T prev, INetworkAccess<T> networkLoad)
+        public UpdateTransaction(string address, T item, T prev, INetworkModelAccess<T> networkLoad)
         {
             Action = () => networkLoad.Put(address, item.ID, item);
             Rollback = () => networkLoad.Put(address, prev.ID, prev);

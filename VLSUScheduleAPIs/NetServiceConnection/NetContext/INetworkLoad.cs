@@ -8,19 +8,43 @@ using System.Threading.Tasks;
 
 namespace NetServiceConnection.NetContext
 {
-    public interface INetworkAccess<T>
+    public interface INetworkConstructor
+    {
+        List<Action<HttpClient>> PreHeader { get; set; }
+        List<Action<object>> ModelWorker { get; set; }
+    }
+
+    public interface INetworkModelAccess<T> : INetworkConstructor
     {
         Task<List<T>> Load(string address);
         Task<T> Add(string address, T item);
         void Delete(string address, int id);
         Task<T> Put(string address, int id, T item);
         Task<T> Get(string address, int id);
-        List<Action<HttpClient>> PreHeader { get; set; }
     }
 
-    public class HttpLoad<T> : INetworkAccess<T>
+    public class HttpLoad<T> : INetworkModelAccess<T>
     {
+
         public List<Action<HttpClient>> PreHeader { get; set; }
+        public List<Action<object>> ModelWorker { get; set; } = new List<Action<object>>();
+
+        private T GetModel(string data)
+        {
+            var model = JsonConvert.DeserializeObject<T>(data);
+            foreach (var modelWork in ModelWorker)
+                modelWork(model);
+            return model;
+        }
+
+        private List<T> GetListModel(string data)
+        {
+            var model = JsonConvert.DeserializeObject<List<T>>(data);
+            foreach (var modelWork in ModelWorker)
+                foreach (var m in model)
+                    modelWork(m);
+            return model;
+        }
 
         public HttpClient CreateHttpClient()
         {
@@ -38,7 +62,7 @@ namespace NetServiceConnection.NetContext
             using (var httpClient = CreateHttpClient())
             {
                 var response = await httpClient.PostAsync(address, new StringContent(JsonConvert.SerializeObject(item)));
-                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                return GetModel(await response.Content.ReadAsStringAsync());
             }
         }
 
@@ -55,7 +79,7 @@ namespace NetServiceConnection.NetContext
             using (var httpClient = CreateHttpClient())
             {
                 var response = await httpClient.GetAsync($"{address}/{id}");
-                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                return GetModel(await response.Content.ReadAsStringAsync());
             }
         }
 
@@ -64,7 +88,7 @@ namespace NetServiceConnection.NetContext
             using (var httpClient = CreateHttpClient())
             {
                 var response = await httpClient.GetAsync(address);
-                return JsonConvert.DeserializeObject<List<T>>(await response.Content.ReadAsStringAsync());
+                return GetListModel(await response.Content.ReadAsStringAsync());
             }
         }
 
@@ -73,7 +97,7 @@ namespace NetServiceConnection.NetContext
             using (var httpClient = CreateHttpClient())
             {
                 var response = await httpClient.PutAsync($"{address}/{id}", new StringContent(JsonConvert.SerializeObject(item)));
-                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                return GetModel(await response.Content.ReadAsStringAsync());
             }
         }
     }

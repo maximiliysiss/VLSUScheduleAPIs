@@ -39,9 +39,9 @@ namespace Commonlibrary.Controllers
             {
                 ID = $"{consulConfig.ServiceId}-{uri.Port}",
                 Name = consulConfig.ServiceName,
-                Address = $"{uri.Scheme}://{uri.Host}:{uri.Port}",
+                Address = $"{uri.Scheme}://{uri.Host}",
                 Port = uri.Port,
-                Tags = consulConfig.Tags.ToArray()
+                Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };
 
             logger.LogInformation("Registering with Consul");

@@ -62,9 +62,9 @@ namespace VLSUScheduleAPIs
                 };
             });
 
-            var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             services.AddTransient<IConsulWrapper, ConsulWrapper>();
 
+            var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             services.AddSingleton(consulSettings);
             services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
             {
