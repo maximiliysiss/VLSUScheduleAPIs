@@ -1,28 +1,51 @@
 version: '3.4'
 
+networks:
+  app-tier:
+    driver: bridge
+
 services:
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-tier
+
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    networks:
+      - app-tier
+
   apisgateways:
     image: ${DOCKER_REGISTRY-}apisgateways
     build:
       context: .
       dockerfile: APIsGateWays/Dockerfile
+    networks:
+      - app-tier
 
   authapi:
     image: ${DOCKER_REGISTRY-}authapi
     build:
       context: .
       dockerfile: AuthAPI/AuthAPI/Dockerfile
-
+    networks:
+      - app-tier
 
   integrationapi:
     image: ${DOCKER_REGISTRY-}integrationapi
     build:
       context: .
       dockerfile: IntegrationAPI/IntegrationAPI/Dockerfile
-
+    networks:
+      - app-tier
 
   vlsuscheduleapis:
     image: ${DOCKER_REGISTRY-}vlsuscheduleapis
+    networks:
+      - app-tier
     build:
       context: .
       dockerfile: VLSUScheduleAPIs/VLSUScheduleAPIs/Dockerfile

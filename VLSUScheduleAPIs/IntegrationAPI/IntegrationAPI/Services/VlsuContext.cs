@@ -15,5 +15,9 @@ namespace IntegrationAPI.Services
         }
 
         public NetSet<Auditory> Auditories { get; set; }
+        public NetSet<Group> Groups { get; set; }
+        public NetSet<IllCard> IllCards { get; set; }
+        public NetSet<Lesson> Lessons { get; set; }
+        public NetSet<Schedule> Schedules { get; set; }
     }
 }

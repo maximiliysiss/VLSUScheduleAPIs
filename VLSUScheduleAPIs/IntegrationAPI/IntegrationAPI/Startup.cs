@@ -10,6 +10,8 @@ using Commonlibrary.Services.Settings;
 using NetServiceConnection.NetContext;
 using IntegrationAPI.Services;
 using Commonlibrary.Controllers;
+using NetServiceConnection.Extensions;
+using ControllerCommon.Services;
 
 namespace IntegrationAPI
 {
@@ -40,14 +42,14 @@ namespace IntegrationAPI
             });
 
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
-
+            var authService = Configuration.GetSection("AuthService").Get<AuthorizeService>();
             services.AddSingleton(consulSettings);
-            services.AddSingleton(typeof(INetworkModelAccess<>), typeof(HttpLoad<>));
-            services.AddTransient<VlsuContext>();
-            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            services.AddNetContext(x => new VlsuContext(x.GetService<IConsulClient>(), x).UserAuthorization(() =>
             {
-                consulConfig.Address = new Uri(consulSettings.Address);
+
             }));
+            services.AddSingleton<IConsulClient, ConsulClient>(p =>
+                            new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,8 +8,8 @@ namespace AuthAPI.Models
 {
     public class TokenResult
     {
-        public string JWTRefresh { get; set; }
-        public string JWTAccess { get; set; }
+        public string RefreshToken { get; set; }
+        public string AccessToken { get; set; }
         public UserType UserType { get; set; }
     }
 }

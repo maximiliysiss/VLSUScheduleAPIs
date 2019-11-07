@@ -15,7 +15,7 @@ namespace NetServiceConnection.NetContext
         private readonly IConsulClient consulClient;
         private readonly Dictionary<string, string> addresses = new Dictionary<string, string>();
         private readonly IServiceProvider serviceProvider;
-        public List<Action<HttpClient>> preHeader;
+        public List<Action<HttpClient>> preHeader = new List<Action<HttpClient>>();
         public bool isLazy = false;
 
         public static readonly string contextTag = "netcontext:";
@@ -55,7 +55,7 @@ namespace NetServiceConnection.NetContext
             var networkConstructor = networkService as INetworkConstructor;
             if (isLazy)
                 networkConstructor.ModelWorker.Add(CreateLazy(type));
-            networkConstructor.PreHeader = preHeader;
+            networkConstructor.PreHeader.AddRange(preHeader);
             return Activator.CreateInstance(typeof(NetSet<>).MakeGenericType(type), addresses[name.ToLower()], networkService);
         }
 
@@ -70,7 +70,7 @@ namespace NetServiceConnection.NetContext
                     {
                         var tagName = tag.Substring(tag.IndexOf(contextTag) + contextTag.Length);
                         if (!addresses.ContainsKey(tagName))
-                            addresses.Add(tagName.ToLower(), service.Value.Address);
+                            addresses.Add(tagName.ToLower(), $"{service.Value.Address}/api/{tagName}");
                     }
                 }
             }

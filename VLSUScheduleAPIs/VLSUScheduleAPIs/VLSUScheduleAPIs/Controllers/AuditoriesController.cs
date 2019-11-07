@@ -16,6 +16,7 @@ using System.Collections;
 namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "Service")]
     [ApiController]
     public class AuditoriesController : ControllerBase
     {

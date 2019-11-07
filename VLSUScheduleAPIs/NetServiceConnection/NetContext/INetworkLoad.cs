@@ -16,17 +16,21 @@ namespace NetServiceConnection.NetContext
 
     public interface INetworkModelAccess<T> : INetworkConstructor
     {
-        Task<List<T>> Load(string address);
-        Task<T> Add(string address, T item);
+        List<T> Load(string address);
+        T Add(string address, ref T item);
         void Delete(string address, int id);
-        Task<T> Put(string address, int id, T item);
-        Task<T> Get(string address, int id);
+        T Put(string address, int id, ref T item);
+        T Get(string address, int id);
     }
 
     public class HttpLoad<T> : INetworkModelAccess<T>
     {
+        public HttpLoad()
+        {
+            PreHeader.Add(x => x.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")));
+        }
 
-        public List<Action<HttpClient>> PreHeader { get; set; }
+        public List<Action<HttpClient>> PreHeader { get; set; } = new List<Action<HttpClient>>();
         public List<Action<object>> ModelWorker { get; set; } = new List<Action<object>>();
 
         private T GetModel(string data)
@@ -49,20 +53,18 @@ namespace NetServiceConnection.NetContext
         public HttpClient CreateHttpClient()
         {
             var httpClient = new HttpClient();
-            if (PreHeader != null)
-            {
-                foreach (var pre in PreHeader)
-                    pre(httpClient);
-            }
+            foreach (var pre in PreHeader)
+                pre(httpClient);
             return httpClient;
         }
 
-        public async Task<T> Add(string address, T item)
+        public T Add(string address, ref T item)
         {
             using (var httpClient = CreateHttpClient())
             {
-                var response = await httpClient.PostAsync(address, new StringContent(JsonConvert.SerializeObject(item)));
-                return GetModel(await response.Content.ReadAsStringAsync());
+                var response = httpClient.PostAsync(address, new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json")).Result;
+                item = GetModel(response.Content.ReadAsStringAsync().Result);
+                return item;
             }
         }
 
@@ -74,30 +76,31 @@ namespace NetServiceConnection.NetContext
             }
         }
 
-        public async Task<T> Get(string address, int id)
+        public T Get(string address, int id)
         {
             using (var httpClient = CreateHttpClient())
             {
-                var response = await httpClient.GetAsync($"{address}/{id}");
-                return GetModel(await response.Content.ReadAsStringAsync());
+                var response = httpClient.GetAsync($"{address}/{id}").Result;
+                return GetModel(response.Content.ReadAsStringAsync().Result);
             }
         }
 
-        public async Task<List<T>> Load(string address)
+        public List<T> Load(string address)
         {
             using (var httpClient = CreateHttpClient())
             {
-                var response = await httpClient.GetAsync(address);
-                return GetListModel(await response.Content.ReadAsStringAsync());
+                var response = httpClient.GetAsync(address).Result;
+                return GetListModel(response.Content.ReadAsStringAsync().Result);
             }
         }
 
-        public async Task<T> Put(string address, int id, T item)
+        public T Put(string address, int id, ref T item)
         {
             using (var httpClient = CreateHttpClient())
             {
-                var response = await httpClient.PutAsync($"{address}/{id}", new StringContent(JsonConvert.SerializeObject(item)));
-                return GetModel(await response.Content.ReadAsStringAsync());
+                var response = httpClient.PutAsync($"{address}/{id}", new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json")).Result;
+                item = GetModel(response.Content.ReadAsStringAsync().Result);
+                return item;
             }
         }
     }

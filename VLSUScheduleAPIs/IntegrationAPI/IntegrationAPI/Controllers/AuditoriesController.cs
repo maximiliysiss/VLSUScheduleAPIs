@@ -13,18 +13,72 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class AuditoriesController : ControllerBase
     {
-        VlsuContext vlsuContext;
+        VlsuContext _context;
 
-        public AuditoriesController(VlsuContext vlsuContext)
+        public AuditoriesController(VlsuContext _context)
         {
-            this.vlsuContext = vlsuContext;
+            this._context = _context;
         }
 
-        [HttpPost]
-        public ActionResult Add(Auditory auditory)
+        [HttpGet]
+        public ActionResult<IEnumerable<Auditory>> GetAuditories()
         {
-            vlsuContext.Auditories.Add(auditory);
-            return Ok();
+            return _context.Auditories.ToList();
+        }
+
+        // GET: api/Auditories/5
+        [HttpGet("{id}")]
+        public ActionResult<Auditory> GetAuditory(int id)
+        {
+            var auditory = _context.Auditories.Get(id);
+
+            if (auditory == null)
+            {
+                return NotFound();
+            }
+
+            return auditory;
+        }
+
+        // PUT: api/Auditories/5
+        [HttpPut("{id}")]
+        public IActionResult PutAuditory(int id, Auditory auditory)
+        {
+            if (id != auditory.ID)
+            {
+                return BadRequest();
+            }
+
+            _context.Auditories.Update(auditory);
+            _context.Commit();
+
+            return NoContent();
+        }
+
+        // POST: api/Auditories
+        [HttpPost]
+        public ActionResult<Auditory> PostAuditory(Auditory auditory)
+        {
+            _context.Auditories.Add(auditory);
+            _context.Commit();
+
+            return CreatedAtAction("GetAuditory", new { id = auditory.ID }, auditory);
+        }
+
+        // DELETE: api/Auditories/5
+        [HttpDelete("{id}")]
+        public ActionResult<Auditory> DeleteAuditory(int id)
+        {
+            var auditory = _context.Auditories.Get(id);
+            if (auditory == null)
+            {
+                return NotFound();
+            }
+
+            _context.Auditories.Remove(auditory);
+            _context.Commit();
+
+            return auditory;
         }
     }
 }

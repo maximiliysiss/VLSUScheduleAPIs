@@ -9,14 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Settings\**" />
+    <Content Remove="Services\Settings\**" />
+    <EmbeddedResource Remove="Services\Settings\**" />
+    <None Remove="Services\Settings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Consul" Version="0.7.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Commonlibrary\Commonlibrary.csproj" />
   </ItemGroup>
 
 </Project>

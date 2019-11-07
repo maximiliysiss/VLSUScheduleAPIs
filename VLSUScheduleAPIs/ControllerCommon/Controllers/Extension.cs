@@ -7,16 +7,13 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Commonlibrary.Controllers
 {
     public static class Extension
     {
-        public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app,
-         IApplicationLifetime lifetime)
+        public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app, IApplicationLifetime lifetime)
         {
 
             var consulClient = app.ApplicationServices
@@ -39,7 +36,7 @@ namespace Commonlibrary.Controllers
             {
                 ID = $"{consulConfig.ServiceId}-{uri.Port}",
                 Name = consulConfig.ServiceName,
-                Address = $"{uri.Scheme}://{uri.Host}",
+                Address = $"{uri.Scheme}://{uri.Host}:{uri.Port}",
                 Port = uri.Port,
                 Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };

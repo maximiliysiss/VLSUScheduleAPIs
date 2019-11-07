@@ -12,14 +12,14 @@ namespace NetServiceConnection.NetContext
 {
     public interface ITransactionContains
     {
-        List<Transaction> Transactions { get; set; }
+        List<ModelTransaction> Transactions { get; set; }
     }
 
     public class NetSet<T> : IEnumerable<T>, ITransactionContains where T : IModel
     {
         private readonly string address;
         private readonly INetworkModelAccess<T> networkLoad;
-        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public List<ModelTransaction> Transactions { get; set; } = new List<ModelTransaction>();
 
         public NetSet(string address, INetworkModelAccess<T> networkLoad)
         {
@@ -27,9 +27,9 @@ namespace NetServiceConnection.NetContext
             this.networkLoad = networkLoad;
         }
 
-        protected async Task<List<T>> List() => await networkLoad.Load(address);
+        protected List<T> List() => networkLoad.Load(address);
 
-        public IEnumerator<T> GetEnumerator() => List().Result.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => List().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -37,11 +37,11 @@ namespace NetServiceConnection.NetContext
 
         public void Update(T item)
         {
-            var prev = networkLoad.Get(address, item.ID).Result;
+            var prev = networkLoad.Get(address, item.ID);
             Transactions.Add(new UpdateTransaction<T>(address, item, prev, networkLoad));
         }
 
-        public T Get(int id) => networkLoad.Get(address, id).Result;
+        public T Get(int id) => networkLoad.Get(address, id);
 
         public void Remove(T item) => Transactions.Add(new DeleteTransaction<T>(address, item, networkLoad));
     }

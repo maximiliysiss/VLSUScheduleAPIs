@@ -13,6 +13,7 @@ namespace AuthAPI.Services
     {
         TokenResult AuthAttempt(LoginModel loginModel);
         TokenResult RefreshToken(string token, string refreshToken);
+        string GenerateKey(User user);
     }
 
     public class AuthService : IAuthService
@@ -26,9 +27,10 @@ namespace AuthAPI.Services
             this.authorizeSettings = authorizeSettings;
         }
 
-        private string GenerateToken(User user, int days)
+        private string GenerateToken(User user)
         {
             var now = DateTime.Now;
+            var days = user.UserType == UserType.Service ? 365 : authorizeSettings.AccessExpiration;
             var jwt = new JwtSecurityToken(
                 issuer: authorizeSettings.Issuer,
                 audience: authorizeSettings.Audience,
@@ -44,15 +46,15 @@ namespace AuthAPI.Services
             var user = databaseContext.Users.FirstOrDefault(x => x.Login == loginModel.Login && x.Password == loginModel.Password);
             if (user == null)
                 return null;
-
-            user.Token = GenerateToken(user, authorizeSettings.RefreshExpiration);
+            var token = GenerateToken(user);
+            user.Token = CryptService.CreateMD5(token);
             databaseContext.Update(user);
             databaseContext.SaveChanges();
 
             return new TokenResult
             {
-                JWTRefresh = user.Token,
-                JWTAccess = GenerateToken(user, authorizeSettings.AccessExpiration),
+                RefreshToken = user.Token,
+                AccessToken = token,
                 UserType = user.UserType
             };
         }
@@ -83,13 +85,15 @@ namespace AuthAPI.Services
             var user = databaseContext.Users.FirstOrDefault(x => x.Login == principal.Identity.Name);
             if (user == null || user.Token != refreshToken)
                 return null;
-            var newJwt = GenerateToken(user, authorizeSettings.AccessExpiration);
-            user.Token = GenerateToken(user, authorizeSettings.RefreshExpiration);
+            var accessToken = GenerateToken(user);
+            user.Token = CryptService.CreateMD5(accessToken);
 
             databaseContext.Update(user);
             databaseContext.SaveChanges();
 
-            return new TokenResult { JWTAccess = newJwt, JWTRefresh = user.Token, UserType = user.UserType };
+            return new TokenResult { AccessToken = accessToken, RefreshToken = user.Token, UserType = user.UserType };
         }
+
+        public string GenerateKey(User user) => GenerateToken(user);
     }
 }

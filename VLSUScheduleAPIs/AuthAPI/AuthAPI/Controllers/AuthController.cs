@@ -41,6 +41,7 @@ namespace AuthAPI.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public ActionResult Try() => Ok();
     }
 }

@@ -17,6 +17,12 @@ namespace VLSUScheduleAPIs.Models
     public class Filter
     {
         public string Value { get; set; }
+        /// <summary>
+        /// 0 - Default
+        /// 1 - Teacher
+        /// 2 - Group
+        /// 3 - Auditory
+        /// </summary>
         public FilterType FilterType { get; set; }
     }
 }

@@ -14,7 +14,7 @@ using System;
 using System.Reflection.PortableExecutable;
 using VLSUScheduleAPIs.Services;
 using Commonlibrary.Controllers;
-using ControllerCommon.Services;
+using Microsoft.Extensions.Logging;
 
 namespace VLSUScheduleAPIs
 {
@@ -31,10 +31,8 @@ namespace VLSUScheduleAPIs
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<Services.DatabaseContext>(x =>
-            {
-                x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
+            services.AddSingleton<RedisService>();
+            services.AddDbContext<Services.DatabaseContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSwaggerGen(c =>
             {
@@ -62,23 +60,21 @@ namespace VLSUScheduleAPIs
                 };
             });
 
-            services.AddTransient<IConsulWrapper, ConsulWrapper>();
-
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             services.AddSingleton(consulSettings);
-            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-            {
-                consulConfig.Address = new Uri(consulSettings.Address);
-            }));
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime,
+                                RedisService redisService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            redisService.Connect();
 
             app.UseAuthentication();
             app.UseSwagger();
