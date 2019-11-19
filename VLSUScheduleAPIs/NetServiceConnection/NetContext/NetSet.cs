@@ -1,12 +1,6 @@
-﻿using Commonlibrary.Models;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace NetServiceConnection.NetContext
 {
@@ -15,8 +9,15 @@ namespace NetServiceConnection.NetContext
         List<ModelTransaction> Transactions { get; set; }
     }
 
-    public class NetSet<T> : IEnumerable<T>, ITransactionContains where T : IModel
+    public class NetSet<T> : IEnumerable<T>, ITransactionContains
     {
+        private static readonly PropertyInfo idProperty;
+
+        static NetSet()
+        {
+            idProperty = typeof(T).GetProperty("ID");
+        }
+
         private readonly string address;
         private readonly INetworkModelAccess<T> networkLoad;
         public List<ModelTransaction> Transactions { get; set; } = new List<ModelTransaction>();
@@ -37,7 +38,7 @@ namespace NetServiceConnection.NetContext
 
         public void Update(T item)
         {
-            var prev = networkLoad.Get(address, item.ID);
+            var prev = networkLoad.Get(address, (int)idProperty.GetValue(item));
             Transactions.Add(new UpdateTransaction<T>(address, item, prev, networkLoad));
         }
 

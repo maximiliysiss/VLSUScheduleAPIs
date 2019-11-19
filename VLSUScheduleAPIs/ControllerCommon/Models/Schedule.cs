@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Commonlibrary.Models
 {
-    public class Schedule: IModel
+    public class Schedule
     {
         public int ID { get; set; }
         public int AuditoryId { get; set; }

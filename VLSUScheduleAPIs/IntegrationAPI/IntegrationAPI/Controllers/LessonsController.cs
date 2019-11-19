@@ -22,14 +22,14 @@ namespace IntegrationAPI.Controllers
 
         // GET: api/Lessons
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Lesson>>> GetLessons()
+        public ActionResult<IEnumerable<Lesson>> GetLessons()
         {
             return _context.Lessons.ToList();
         }
 
         // GET: api/Lessons/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Lesson>> GetLesson(int id)
+        public ActionResult<Lesson> GetLesson(int id)
         {
             var lesson = _context.Lessons.Get(id);
 
@@ -43,7 +43,7 @@ namespace IntegrationAPI.Controllers
 
         // PUT: api/Lessons/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLesson(int id, Lesson lesson)
+        public IActionResult PutLesson(int id, Lesson lesson)
         {
             if (id != lesson.ID)
             {
@@ -58,7 +58,7 @@ namespace IntegrationAPI.Controllers
 
         // POST: api/Lessons
         [HttpPost]
-        public async Task<ActionResult<Lesson>> PostLesson(Lesson lesson)
+        public ActionResult<Lesson> PostLesson(Lesson lesson)
         {
             _context.Lessons.Add(lesson);
             _context.Commit();
@@ -68,7 +68,7 @@ namespace IntegrationAPI.Controllers
 
         // DELETE: api/Lessons/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Lesson>> DeleteLesson(int id)
+        public ActionResult<Lesson> DeleteLesson(int id)
         {
             var lesson = _context.Lessons.Get(id);
             if (lesson == null)

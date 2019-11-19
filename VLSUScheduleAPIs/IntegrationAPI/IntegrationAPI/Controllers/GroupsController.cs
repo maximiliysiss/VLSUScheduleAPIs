@@ -22,14 +22,14 @@ namespace IntegrationAPI.Controllers
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+        public ActionResult<IEnumerable<Group>> GetGroups()
         {
             return _context.Groups.ToList();
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id)
+        public ActionResult<Group> GetGroup(int id)
         {
             var @group = _context.Groups.Get(id);
 
@@ -43,7 +43,7 @@ namespace IntegrationAPI.Controllers
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroup(int id, Group @group)
+        public IActionResult PutGroup(int id, Group @group)
         {
             if (id != @group.ID)
             {
@@ -59,7 +59,7 @@ namespace IntegrationAPI.Controllers
 
         // POST: api/Groups
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(Group @group)
+        public ActionResult<Group> PostGroup(Group @group)
         {
             _context.Groups.Add(@group);
             _context.Commit();
@@ -69,7 +69,7 @@ namespace IntegrationAPI.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Group>> DeleteGroup(int id)
+        public ActionResult<Group> DeleteGroup(int id)
         {
             var @group = _context.Groups.Get(id);
             if (@group == null)

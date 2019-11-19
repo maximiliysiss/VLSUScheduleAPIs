@@ -1,6 +1,4 @@
-﻿using Commonlibrary.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Reflection;
 
 namespace NetServiceConnection.NetContext
@@ -13,8 +11,15 @@ namespace NetServiceConnection.NetContext
         public PropertyInfo GetIdProperty { get; set; }
     }
 
-    public class AddTransaction<T> : ModelTransaction where T : IModel
+    public class AddTransaction<T> : ModelTransaction
     {
+        private static readonly PropertyInfo idProperty;
+
+        static AddTransaction()
+        {
+            idProperty = typeof(T).GetProperty("ID");
+        }
+
         private int id;
 
         public AddTransaction(string address, T item, INetworkModelAccess<T> networkLoad)
@@ -22,32 +27,45 @@ namespace NetServiceConnection.NetContext
             Action = () =>
             {
                 var elem = networkLoad.Add(address, ref item);
-                id = elem.ID;
-                item.ID = id;
+                id = (int)idProperty.GetValue(item);
+                idProperty.SetValue(item, id);
             };
             Rollback = () => networkLoad.Delete(address, id);
         }
     }
 
-    public class DeleteTransaction<T> : ModelTransaction where T : IModel
+    public class DeleteTransaction<T> : ModelTransaction
     {
+        private static readonly PropertyInfo idProperty;
+
+        static DeleteTransaction()
+        {
+            idProperty = typeof(T).GetProperty("ID");
+        }
         public DeleteTransaction(string address, T item, INetworkModelAccess<T> networkLoad)
         {
             Action = () => networkLoad.Delete(address, (int)GetIdProperty.GetValue(item));
             Rollback = () =>
             {
-                item.ID = 0;
+                idProperty.SetValue(item, 0);
                 networkLoad.Add(address, ref item);
             };
         }
     }
 
-    public class UpdateTransaction<T> : ModelTransaction where T : IModel
+    public class UpdateTransaction<T> : ModelTransaction
     {
+        private static readonly PropertyInfo idProperty;
+
+        static UpdateTransaction()
+        {
+            idProperty = typeof(T).GetProperty("ID");
+        }
+
         public UpdateTransaction(string address, T item, T prev, INetworkModelAccess<T> networkLoad)
         {
-            Action = () => networkLoad.Put(address, item.ID, ref item);
-            Rollback = () => networkLoad.Put(address, prev.ID, ref prev);
+            Action = () => networkLoad.Put(address, (int)idProperty.GetValue(item), ref item);
+            Rollback = () => networkLoad.Put(address, (int)idProperty.GetValue(item), ref prev);
         }
     }
 }

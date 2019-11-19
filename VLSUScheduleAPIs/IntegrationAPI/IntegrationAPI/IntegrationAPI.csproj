@@ -20,12 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ControllerCommon\CommonLibrary.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NetServiceConnection">
-      <HintPath>..\..\NetServiceConnection\bin\Release\netcoreapp2.2\NetServiceConnection.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\NetServiceConnection\NetServiceConnection.csproj" />
   </ItemGroup>
 
 </Project>

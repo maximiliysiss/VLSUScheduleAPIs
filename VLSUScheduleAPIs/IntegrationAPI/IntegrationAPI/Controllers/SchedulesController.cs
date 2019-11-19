@@ -22,14 +22,14 @@ namespace IntegrationAPI.Controllers
 
         // GET: api/Schedules
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Schedule>>> GetSchedules()
+        public ActionResult<IEnumerable<Schedule>> GetSchedules()
         {
             return _context.Schedules.ToList();
         }
 
         // GET: api/Schedules/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Schedule>> GetSchedule(int id)
+        public ActionResult<Schedule> GetSchedule(int id)
         {
             var schedule = _context.Schedules.Get(id);
 
@@ -43,7 +43,7 @@ namespace IntegrationAPI.Controllers
 
         // PUT: api/Schedules/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedule(int id, Schedule schedule)
+        public IActionResult PutSchedule(int id, Schedule schedule)
         {
             if (id != schedule.ID)
             {
@@ -58,7 +58,7 @@ namespace IntegrationAPI.Controllers
 
         // POST: api/Schedules
         [HttpPost]
-        public async Task<ActionResult<Schedule>> PostSchedule(Schedule schedule)
+        public ActionResult<Schedule> PostSchedule(Schedule schedule)
         {
             _context.Schedules.Add(schedule);
             _context.Commit();
@@ -68,7 +68,7 @@ namespace IntegrationAPI.Controllers
 
         // DELETE: api/Schedules/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Schedule>> DeleteSchedule(int id)
+        public ActionResult<Schedule> DeleteSchedule(int id)
         {
             var schedule = _context.Schedules.Get(id);
             if (schedule == null)

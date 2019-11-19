@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Commonlibrary.Models
 {
-    public class Student : User
+    public class Student: User
     {
         public int GroupId { get; set; }
         public Group Group { get; set; }

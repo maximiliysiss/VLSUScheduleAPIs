@@ -22,14 +22,14 @@ namespace IntegrationAPI.Controllers
 
         // GET: api/IllCards
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IllCard>>> GetIllCards()
+        public ActionResult<IEnumerable<IllCard>> GetIllCards()
         {
             return _context.IllCards.ToList();
         }
 
         // GET: api/IllCards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IllCard>> GetIllCard(int id)
+        public ActionResult<IllCard> GetIllCard(int id)
         {
             var illCard = _context.IllCards.Get(id);
 
@@ -43,7 +43,7 @@ namespace IntegrationAPI.Controllers
 
         // PUT: api/IllCards/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIllCard(int id, IllCard illCard)
+        public IActionResult PutIllCard(int id, IllCard illCard)
         {
             if (id != illCard.ID)
             {
@@ -58,7 +58,7 @@ namespace IntegrationAPI.Controllers
 
         // POST: api/IllCards
         [HttpPost]
-        public async Task<ActionResult<IllCard>> PostIllCard(IllCard illCard)
+        public ActionResult<IllCard> PostIllCard(IllCard illCard)
         {
             _context.IllCards.Add(illCard);
             _context.Commit();
@@ -68,7 +68,7 @@ namespace IntegrationAPI.Controllers
 
         // DELETE: api/IllCards/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<IllCard>> DeleteIllCard(int id)
+        public ActionResult<IllCard> DeleteIllCard(int id)
         {
             var illCard = _context.IllCards.Get(id);
             if (illCard == null)

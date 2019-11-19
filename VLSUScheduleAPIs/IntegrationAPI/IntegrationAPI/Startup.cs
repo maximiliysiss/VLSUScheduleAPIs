@@ -46,7 +46,7 @@ namespace IntegrationAPI
             services.AddSingleton(consulSettings);
             services.AddNetContext(x => new VlsuContext(x.GetService<IConsulClient>(), x).UserAuthorization(() =>
             {
-
+                return string.Empty;
             }));
             services.AddSingleton<IConsulClient, ConsulClient>(p =>
                             new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));

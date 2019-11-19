@@ -14,7 +14,7 @@ namespace Commonlibrary.Models
         Service
     }
 
-    public class User : IModel
+    public class User
     {
         public int ID { get; set; }
         public string FIO { get; set; }
