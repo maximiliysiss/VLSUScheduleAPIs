@@ -5,8 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["AuthAPI/AuthAPI/AuthAPI.csproj", "AuthAPI/AuthAPI/"]
-COPY ["Commonlibrary/Commonlibrary.csproj", "Commonlibrary/"]
-COPY ["ControllerCommon/ControllerCommon.csproj", "ControllerCommon/"]
+COPY ["ControllerCommon/CommonLibrary.csproj", "ControllerCommon/"]
 RUN dotnet restore "AuthAPI/AuthAPI/AuthAPI.csproj"
 COPY . .
 WORKDIR "/src/AuthAPI/AuthAPI"

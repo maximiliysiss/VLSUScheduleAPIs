@@ -5,8 +5,8 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["IntegrationAPI/IntegrationAPI/IntegrationAPI.csproj", "IntegrationAPI/IntegrationAPI/"]
-COPY ["Commonlibrary/Commonlibrary.csproj", "Commonlibrary/"]
-COPY ["ControllerCommon/ControllerCommon.csproj", "ControllerCommon/"]
+COPY ["NetServiceConnection/NetServiceConnection.csproj", "NetServiceConnection/"]
+COPY ["ControllerCommon/CommonLibrary.csproj", "ControllerCommon/"]
 RUN dotnet restore "IntegrationAPI/IntegrationAPI/IntegrationAPI.csproj"
 COPY . .
 WORKDIR "/src/IntegrationAPI/IntegrationAPI"

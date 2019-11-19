@@ -6,8 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj", "VLSUScheduleAPIs/VLSUScheduleAPIs/"]
-COPY ["Commonlibrary/Commonlibrary.csproj", "Commonlibrary/"]
-COPY ["ControllerCommon/ControllerCommon.csproj", "ControllerCommon/"]
+COPY ["ControllerCommon/CommonLibrary.csproj", "ControllerCommon/"]
 RUN dotnet restore "VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj"
 COPY . .
 WORKDIR "/src/VLSUScheduleAPIs/VLSUScheduleAPIs"
