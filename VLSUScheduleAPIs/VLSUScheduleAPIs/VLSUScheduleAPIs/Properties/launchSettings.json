@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "VLSUScheduleAPIs": {
+      "commandName": "Project",
+      "launchBrowser": false
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": false
+    }
+  }
+}

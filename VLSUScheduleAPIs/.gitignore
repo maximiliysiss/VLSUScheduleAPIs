@@ -1,3 +1,8 @@
 bin/
 obj/
 .vs/
+IntegrationAPI/Commonlibrary/
+VLSUScheduleAPIs/Commonlibrary/
+AuthAPI/Commonlibrary/
+Migrations/
+DatabasesScripts/

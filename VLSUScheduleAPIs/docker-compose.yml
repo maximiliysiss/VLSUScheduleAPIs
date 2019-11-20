@@ -1,0 +1,88 @@
+version: '3.4'
+
+networks:
+  app-tier:
+    driver: bridge 
+
+services:
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-tier
+    ports:
+      - '6379:6379'
+
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    networks:
+      - app-tier
+
+  consul:
+    image: bitnami/consul:latest
+    networks:
+      - app-tier
+    ports:
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
+
+  apisgateways:
+    image: ${DOCKER_REGISTRY-}apisgateways
+    build:
+      context: .
+      dockerfile: APIsGateWays/Dockerfile
+    networks:
+      - app-tier
+    ports:
+      - '5000:80'
+
+  authapi:
+    image: ${DOCKER_REGISTRY-}authapi
+    build:
+      context: .
+      dockerfile: AuthAPI/AuthAPI/Dockerfile
+    networks:
+      - app-tier
+    depends_on:
+      - db
+      - consul
+    ports:
+      - '5001:80'
+
+  integrationapi:
+    image: ${DOCKER_REGISTRY-}integrationapi
+    build:
+      context: .
+      dockerfile: IntegrationAPI/IntegrationAPI/Dockerfile
+    networks:
+      - app-tier
+    depends_on:
+      - consul
+    ports:
+      - '5002:80'
+
+  vlsuscheduleapis:
+    image: ${DOCKER_REGISTRY-}vlsuscheduleapis
+    build:
+      context: .
+      dockerfile: VLSUScheduleAPIs/VLSUScheduleAPIs/Dockerfile
+    networks:
+      - app-tier
+    depends_on:
+      - db
+      - redis
+      - consul
+    ports:
+      - '5003:80'
