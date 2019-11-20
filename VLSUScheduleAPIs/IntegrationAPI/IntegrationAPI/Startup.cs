@@ -36,8 +36,8 @@ namespace IntegrationAPI
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
-                    Title = "VLSUScheduleApi",
-                    Description = "VLSUScheduleApi"
+                    Title = "IntegrationAPI",
+                    Description = "IntegrationAPI"
                 });
             });
 
@@ -80,7 +80,7 @@ namespace IntegrationAPI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "VLSUScheduleApi");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "IntegrationAPI");
             });
 
             app.RegisterWithConsul(applicationLifetime);
