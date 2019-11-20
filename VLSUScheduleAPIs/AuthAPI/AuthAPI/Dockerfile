@@ -10,6 +10,8 @@ RUN dotnet restore "AuthAPI/AuthAPI/AuthAPI.csproj"
 COPY . .
 WORKDIR "/src/AuthAPI/AuthAPI"
 RUN dotnet build "AuthAPI.csproj" -c Release -o /app
+RUN dotnet ef migrations add init
+RUN dotnet ef database update
 
 FROM build AS publish
 RUN dotnet publish "AuthAPI.csproj" -c Release -o /app

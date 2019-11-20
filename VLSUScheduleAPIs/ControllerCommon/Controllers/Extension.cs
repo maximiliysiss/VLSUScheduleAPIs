@@ -30,18 +30,15 @@ namespace Commonlibrary.Controllers
             var addresses = features.Get<IServerAddressesFeature>();
             var address = addresses.Addresses.First();
 
-
-            var uri = new Uri(address);
             var registration = new AgentServiceRegistration()
             {
-                ID = $"{consulConfig.ServiceId}-{uri.Port}",
+                ID = $"{consulConfig.ServiceId}",
                 Name = consulConfig.ServiceName,
-                Address = $"{uri.Scheme}://{uri.Host}:{uri.Port}",
-                Port = uri.Port,
+                Address = address,
+                Port = int.Parse(address.Substring(address.LastIndexOf(":") + 1)),
                 Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };
 
-            logger.LogInformation("Registering with Consul");
             consulClient.Agent.ServiceDeregister(registration.ID).Wait();
             consulClient.Agent.ServiceRegister(registration).Wait();
 
@@ -50,6 +47,8 @@ namespace Commonlibrary.Controllers
                 logger.LogInformation("Deregistering from Consul");
                 consulClient.Agent.ServiceDeregister(registration.ID).Wait();
             });
+
+            logger.LogInformation("Registered with Consul");
 
             return app;
         }

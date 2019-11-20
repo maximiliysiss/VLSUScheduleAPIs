@@ -12,6 +12,8 @@ using IntegrationAPI.Services;
 using Commonlibrary.Controllers;
 using NetServiceConnection.Extensions;
 using ControllerCommon.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IntegrationAPI
 {
@@ -28,8 +30,6 @@ namespace IntegrationAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-
 
             services.AddSwaggerGen(c =>
             {
@@ -50,6 +50,22 @@ namespace IntegrationAPI
             }));
             services.AddSingleton<IConsulClient, ConsulClient>(p =>
                             new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
+
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthorizeSettings>();
+            services.AddSingleton(authSettings);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidAudience = authSettings.Audience,
+                    ValidIssuer = authSettings.Issuer,
+                    IssuerSigningKey = authSettings.SecurityKey
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +76,7 @@ namespace IntegrationAPI
                 app.UseDeveloperExceptionPage();
             }
 
-
+            app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

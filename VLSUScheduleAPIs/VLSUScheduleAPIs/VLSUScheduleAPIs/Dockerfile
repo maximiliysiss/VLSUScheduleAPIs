@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
@@ -11,6 +10,8 @@ RUN dotnet restore "VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj"
 COPY . .
 WORKDIR "/src/VLSUScheduleAPIs/VLSUScheduleAPIs"
 RUN dotnet build "VLSUScheduleAPIs.csproj" -c Release -o /app
+RUN dotnet ef migrations add init
+RUN dotnet ef database update
 
 FROM build AS publish
 RUN dotnet publish "VLSUScheduleAPIs.csproj" -c Release -o /app
