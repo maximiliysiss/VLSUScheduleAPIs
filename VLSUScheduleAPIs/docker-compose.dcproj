@@ -4,8 +4,6 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>52a143f4-56ae-4ea6-9235-116bd0272a53</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api/values</DockerServiceUrl>
     <DockerServiceName>apisgateways</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

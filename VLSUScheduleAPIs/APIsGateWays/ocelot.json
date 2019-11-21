@@ -1,40 +1,38 @@
 {
-    "ReRoutes": [
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
         {
-            "DownstreamPathTemplate": "/api/{catchAll}",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 8000
-                }
-            ],
-            "UpstreamPathTemplate": "/authapi/{catchAll}"
-        },
-        {
-            "DownstreamPathTemplate": "/api/{catchAll}",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 8002
-                }
-            ],
-            "UpstreamPathTemplate": "/vlsuscheduleapis/{catchAll}"
-        },
-        {
-            "DownstreamPathTemplate": "/api/{catchAll}",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 8001
-                }
-            ],
-            "UpstreamPathTemplate": "/integrationapi/{catchAll}"
+          "Host": "authapi",
+          "Port": 80
         }
-    ],
-    "GlobalConfiguration": {
-        "BaseUrl": "https://localhost:7000"
+      ],
+      "UpstreamPathTemplate": "/authapi/{catchAll}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vlsuscheduleapis",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/vlsuscheduleapis/{catchAll}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "integrationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/integrationapi/{catchAll}"
     }
+  ],
+  "GlobalConfiguration": {}
 }
