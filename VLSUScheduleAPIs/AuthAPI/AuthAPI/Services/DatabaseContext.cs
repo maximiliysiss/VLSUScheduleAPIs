@@ -5,18 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Commonlibrary.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthAPI.Services
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext(DbContextOptions options) : base(options)
+        private readonly ILogger<DatabaseContext> logger;
+        private readonly IConfiguration configuration;
+
+        public DatabaseContext(DbContextOptions options, ILogger<DatabaseContext> logger, IConfiguration configuration) : base(options)
         {
+            this.logger = logger;
+            this.configuration = configuration;
         }
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<User> Users { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            logger.LogInformation("Init dbContext");
+            logger.LogInformation($"Connection string: {configuration.GetConnectionString("DefaultConnection")}");
+            base.OnConfiguring(optionsBuilder);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

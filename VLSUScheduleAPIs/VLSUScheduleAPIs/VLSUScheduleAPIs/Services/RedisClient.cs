@@ -62,16 +62,19 @@ namespace VLSUScheduleAPIs.Services
             return await db.StringGetAsync(key);
         }
 
-        public bool SetObject<T>(string key, T obj)
+        public bool SetObject<T>(string key, T obj) where T : class
         {
             var db = _redis.GetDatabase();
             return db.StringSet(key, JsonConvert.SerializeObject(obj));
         }
 
-        public T GetObject<T>(string key)
+        public T GetObject<T>(string key) where T : class
         {
-            var db = _redis.GetDatabase();
-            return JsonConvert.DeserializeObject<T>(db.StringGet(key));
+            var db = _redis.GetDatabase(); 
+            var strRes = db.StringGet(key);
+            if (!strRes.HasValue)
+                return null;
+            return JsonConvert.DeserializeObject<T>(strRes);
         }
-    }
+    } 
 }

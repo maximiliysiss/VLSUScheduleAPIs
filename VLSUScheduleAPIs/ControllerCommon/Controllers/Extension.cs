@@ -30,12 +30,16 @@ namespace Commonlibrary.Controllers
             var addresses = features.Get<IServerAddressesFeature>();
             var address = addresses.Addresses.First();
 
+            var port = address.Substring(address.LastIndexOf(":") + 1);
+            if (port.Last() == '/')
+                port = port.Substring(0, port.Length - 1);
+
             var registration = new AgentServiceRegistration()
             {
                 ID = $"{consulConfig.ServiceId}",
                 Name = consulConfig.ServiceName,
                 Address = address,
-                Port = int.Parse(address.Substring(address.LastIndexOf(":") + 1)),
+                Port = int.Parse(port),
                 Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };
 

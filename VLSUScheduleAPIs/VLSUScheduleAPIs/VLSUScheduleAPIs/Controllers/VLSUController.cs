@@ -23,33 +23,39 @@ namespace VLSUScheduleAPIs.Controllers
             this.redisService = redisService;
         }
 
-        [HttpPost]
-        public ActionResult<List<Schedule>> GetSchedules(Filter[] filters = null)
+        [HttpGet]
+        public ActionResult<List<Schedule>> GetSchedules()
         {
             var scheduleList = redisService.GetObject<List<Schedule>>("vlsu:schedule:current");
             if (scheduleList == null)
                 scheduleList = InitSchedule();
-            if (filters != null)
+            return scheduleList;
+        }
+
+        [HttpPost]
+        public ActionResult<List<Schedule>> GetSchedules([FromBody]Filter[] filters = null)
+        {
+            var scheduleList = redisService.GetObject<List<Schedule>>("vlsu:schedule:current");
+            if (scheduleList == null)
+                scheduleList = InitSchedule();
+            foreach (var filter in filters)
             {
-                foreach (var filter in filters)
+                switch (filter.FilterType)
                 {
-                    switch (filter.FilterType)
-                    {
-                        case FilterType.Teacher:
-                            scheduleList = scheduleList.Where(x => x.Teacher.FIO.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
-                            break;
-                        case FilterType.Group:
-                            scheduleList = scheduleList.Where(x => x.Group.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
-                            break;
-                        case FilterType.Auditory:
-                            scheduleList = scheduleList.Where(x => x.Auditory.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
-                            break;
-                        case FilterType.Default:
-                            scheduleList = scheduleList.Where(x => x.Auditory.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)
-                                                                || x.Group.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)
-                                                                || x.Teacher.FIO.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
-                            break;
-                    }
+                    case FilterType.Teacher:
+                        scheduleList = scheduleList.Where(x => x.Teacher.FIO.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
+                        break;
+                    case FilterType.Group:
+                        scheduleList = scheduleList.Where(x => x.Group.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
+                        break;
+                    case FilterType.Auditory:
+                        scheduleList = scheduleList.Where(x => x.Auditory.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
+                        break;
+                    case FilterType.Default:
+                        scheduleList = scheduleList.Where(x => x.Auditory.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)
+                                                            || x.Group.Name.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)
+                                                            || x.Teacher.FIO.Contains(filter.Value, StringComparison.OrdinalIgnoreCase)).ToList();
+                        break;
                 }
             }
             return scheduleList;
