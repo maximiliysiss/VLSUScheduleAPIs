@@ -1,22 +1,12 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS base
 WORKDIR /app
 EXPOSE 81
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
-WORKDIR /src
-COPY ["VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj", "VLSUScheduleAPIs/VLSUScheduleAPIs/"]
-COPY ["ControllerCommon/CommonLibrary.csproj", "ControllerCommon/"]
-RUN dotnet restore "VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj"
 COPY . .
-WORKDIR "/src/VLSUScheduleAPIs/VLSUScheduleAPIs"
-RUN dotnet build "VLSUScheduleAPIs.csproj" -c Release -o /app
-RUN dotnet ef migrations add init
-RUN dotnet ef database update
+RUN dotnet restore "VLSUScheduleAPIs/VLSUScheduleAPIs/VLSUScheduleAPIs.csproj"
+WORKDIR "VLSUScheduleAPIs/VLSUScheduleAPIs"
+RUN dotnet build "VLSUScheduleAPIs.csproj" -c Release -o /build
+RUN dotnet publish "VLSUScheduleAPIs.csproj" -c Release -o /publish
 
-FROM build AS publish
-RUN dotnet publish "VLSUScheduleAPIs.csproj" -c Release -o /app
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "VLSUScheduleAPIs.dll"]
+COPY migration.sh .
+ENTRYPOINT ["./migration.sh", "VLSUScheduleAPIs.dll"]
