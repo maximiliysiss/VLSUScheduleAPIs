@@ -6,13 +6,15 @@ networks:
 
 services:
 
-  db:
+  db.data:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       SA_PASSWORD: "Your_password123"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    networks:
+      - app-tier
 
   redis:
     image: 'bitnami/redis:latest'
@@ -58,7 +60,7 @@ services:
     networks:
       - app-tier
     depends_on:
-      - db
+      - db.data
       - consul
     ports:
       - '5001:80'
@@ -83,7 +85,7 @@ services:
     networks:
       - app-tier
     depends_on:
-      - db
+      - db.data
       - redis
       - consul
     ports:
