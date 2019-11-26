@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -25,7 +27,8 @@ namespace Commonlibrary.Controllers
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 var res = await client.PostAsJsonAsync($"http://{services.Value.Address}/api/auth/login", new { Login = login, Password = password });
-                return await res.Content.ReadAsStringAsync();
+                var strLogin = await res.Content.ReadAsStringAsync();
+                return $"Bearer {JObject.Parse(strLogin)["accessToken"].Value<string>()}";
             }
         }
 
@@ -59,6 +62,8 @@ namespace Commonlibrary.Controllers
                 Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };
 
+            logger.LogInformation("Registered with Consul");
+
             consulClient.Agent.ServiceDeregister(registration.ID).Wait();
             consulClient.Agent.ServiceRegister(registration).Wait();
 
@@ -67,8 +72,6 @@ namespace Commonlibrary.Controllers
                 logger.LogInformation("Deregistering from Consul");
                 consulClient.Agent.ServiceDeregister(registration.ID).Wait();
             });
-
-            logger.LogInformation("Registered with Consul");
 
             return app;
         }

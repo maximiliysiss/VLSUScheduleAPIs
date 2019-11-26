@@ -71,7 +71,7 @@ namespace VLSUScheduleAPIs
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime,
-                                RedisService redisService)
+                                RedisService redisService, AuthNetContext authNetContext)
         {
             if (env.IsDevelopment())
             {
@@ -80,6 +80,7 @@ namespace VLSUScheduleAPIs
 
             redisService.Connect();
 
+            authNetContext.UserAuthorization(() => app.LoginService(Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

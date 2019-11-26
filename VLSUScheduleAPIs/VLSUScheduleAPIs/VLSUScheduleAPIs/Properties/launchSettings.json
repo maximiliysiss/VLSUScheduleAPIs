@@ -3,7 +3,7 @@
   "profiles": {
     "VLSUScheduleAPIs": {
       "commandName": "Project",
-      "applicationUrl": "http://localhost:6003",
+      "applicationUrl": "http://localhost:6002",
       "launchBrowser": false
     },
     "Docker": {

@@ -3,7 +3,8 @@
   "profiles": {
     "IntegrationAPI": {
       "commandName": "Project",
-      "launchBrowser": false
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:6003"
     },
     "Docker": {
       "commandName": "Docker",

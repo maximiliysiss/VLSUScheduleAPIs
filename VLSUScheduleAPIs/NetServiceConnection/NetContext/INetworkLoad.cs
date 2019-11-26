@@ -58,7 +58,7 @@ namespace NetServiceConnection.NetContext
             return httpClient;
         }
 
-        public T Add(string address, ref T item)
+        public T Add(string address, T item)
         {
             using (var httpClient = CreateHttpClient())
             {

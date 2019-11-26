@@ -26,7 +26,7 @@ namespace NetServiceConnection.NetContext
         {
             Action = () =>
             {
-                var elem = networkLoad.Add(address, ref item);
+                var elem = networkLoad.Add(address, item);
                 id = (int)idProperty.GetValue(item);
                 idProperty.SetValue(item, id);
             };

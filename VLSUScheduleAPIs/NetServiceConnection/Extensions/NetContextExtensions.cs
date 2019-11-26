@@ -19,13 +19,13 @@ namespace NetServiceConnection.Extensions
         public static void AddNetContext<T>(this IServiceCollection services, Type networkAccess = null) where T : NetContext.NetContext
         {
             services.AddSingleton(typeof(INetworkModelAccess<>), networkAccess ?? typeof(HttpLoad<>));
-            services.AddTransient<T>();
+            services.AddSingleton<T>();
         }
 
         public static void AddNetContext<T>(this IServiceCollection services, Func<IServiceProvider, T> construct, Type networkAccess = null) where T : NetContext.NetContext
         {
             services.AddSingleton(typeof(INetworkModelAccess<>), networkAccess ?? typeof(HttpLoad<>));
-            services.AddTransient(construct);
+            services.AddSingleton(construct);
         }
     }
 }
