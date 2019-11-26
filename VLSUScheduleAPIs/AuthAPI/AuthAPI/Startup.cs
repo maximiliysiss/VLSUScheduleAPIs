@@ -80,7 +80,7 @@ namespace AuthAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthAPI");
             });
             app.UseMvc();
-            app.RegisterWithConsul(applicationLifetime);
+            app.RegisterWithConsul(applicationLifetime, "authapi");
         }
     }
 }

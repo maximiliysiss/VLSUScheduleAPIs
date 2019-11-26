@@ -44,10 +44,7 @@ namespace IntegrationAPI
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             var authService = Configuration.GetSection("AuthService").Get<AuthorizeService>();
             services.AddSingleton(consulSettings);
-            services.AddNetContext(x => new VlsuContext(x.GetService<IConsulClient>(), x).UserAuthorization(() =>
-            {
-                return string.Empty;
-            }));
+            services.AddNetContext<VlsuContext>();
             services.AddSingleton<IConsulClient, ConsulClient>(p =>
                             new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
 
@@ -69,13 +66,14 @@ namespace IntegrationAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, VlsuContext vlsuContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            vlsuContext.UserAuthorization(() => app.LoginService(Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

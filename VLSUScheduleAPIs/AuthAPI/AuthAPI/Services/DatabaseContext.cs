@@ -1,9 +1,4 @@
-﻿using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +31,12 @@ namespace AuthAPI.Services
         {
             modelBuilder.Ignore<Group>();
             modelBuilder.Ignore<IllCard>();
+
+            modelBuilder.Entity<User>().HasData(
+                new User { ID = 1, Login = "VlsuScheduleAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("VlsuSchedule") },
+                new User { ID = 2, Login = "IntegrationAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("IntegrationAPI") },
+                new User { ID = 3, Login = "AuthAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("AuthAPI") }
+            );
         }
     }
 }

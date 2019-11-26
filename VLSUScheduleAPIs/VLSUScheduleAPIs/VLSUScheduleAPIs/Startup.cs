@@ -15,6 +15,8 @@ using System.Reflection.PortableExecutable;
 using VLSUScheduleAPIs.Services;
 using Commonlibrary.Controllers;
 using Microsoft.Extensions.Logging;
+using NetServiceConnection.Extensions;
+using NetServiceConnection.NetContext;
 
 namespace VLSUScheduleAPIs
 {
@@ -63,6 +65,8 @@ namespace VLSUScheduleAPIs
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             services.AddSingleton(consulSettings);
             services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
+
+            services.AddNetContext<AuthNetContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

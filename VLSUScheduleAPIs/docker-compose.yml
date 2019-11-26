@@ -29,6 +29,13 @@ services:
     image: 'bitnami/rabbitmq:latest'
     networks:
       - app-tier
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "$PWD/rabbitmq/data/log:/data/log"
+      - "$PWD/rabbitmq/data/mnesia:/data/mnesia"
+      - "$PWD/rabbit_enabled_plugins:/etc/rabbitmq/enabled_plugins"
 
   consul:
     image: bitnami/consul:latest
@@ -74,6 +81,7 @@ services:
       - app-tier
     depends_on:
       - consul
+      - authapi
     ports:
       - '5002:80'
 
@@ -88,5 +96,6 @@ services:
       - db.data
       - redis
       - consul
+      - authapi
     ports:
       - '5003:80'

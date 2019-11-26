@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ControllerCommon\CommonLibrary.csproj" />
+    <ProjectReference Include="..\..\NetServiceConnection\NetServiceConnection.csproj" />
   </ItemGroup>
 </Project>

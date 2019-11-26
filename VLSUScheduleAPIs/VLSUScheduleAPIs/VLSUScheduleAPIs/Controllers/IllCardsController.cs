@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using VLSUScheduleAPIs.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 
 namespace VLSUScheduleAPIs.Controllers
 {
@@ -54,7 +50,6 @@ namespace VLSUScheduleAPIs.Controllers
             _context.IllCards.Add(illCard);
             await _context.SaveChangesAsync();
             scheduleChanger.Reload("ill", illCard);
-
             return CreatedAtAction("GetIllCard", new { id = illCard.ID }, illCard);
         }
 
@@ -69,9 +64,6 @@ namespace VLSUScheduleAPIs.Controllers
             illCard.IsDelete = true;
             _context.IllCards.Update(illCard);
             await _context.SaveChangesAsync();
-
-
-
             return illCard;
         }
     }

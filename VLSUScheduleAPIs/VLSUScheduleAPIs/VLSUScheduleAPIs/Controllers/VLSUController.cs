@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 using Commonlibrary.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VLSUScheduleAPIs.Models;
 using VLSUScheduleAPIs.Services;
@@ -14,13 +14,15 @@ namespace VLSUScheduleAPIs.Controllers
     [ApiController]
     public class VLSUController : ControllerBase
     {
-        public DatabaseContext context;
-        public RedisService redisService;
+        private readonly AuthNetContext authNetContext;
+        private readonly DatabaseContext context;
+        private readonly RedisService redisService;
 
-        public VLSUController(DatabaseContext context, RedisService redisService)
+        public VLSUController(DatabaseContext context, RedisService redisService, AuthNetContext authNetContext)
         {
             this.context = context;
             this.redisService = redisService;
+            this.authNetContext = authNetContext;
         }
 
         [HttpGet]
@@ -30,6 +32,16 @@ namespace VLSUScheduleAPIs.Controllers
             if (scheduleList == null)
                 scheduleList = InitSchedule();
             return scheduleList;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Student")]
+        public ActionResult<List<Schedule>> GetStudentSchedule()
+        {
+            if (!int.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var id))
+                return NotFound();
+            var user = authNetContext.Students.Get(id);
+            return redisService.GetObject<List<Schedule>>("vlsu:schedule:current").Where(x => x.GroupId == user.GroupId).ToList();
         }
 
         [HttpPost]

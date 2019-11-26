@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
@@ -25,6 +26,7 @@ namespace Commonlibrary.Models
         public string Token { get; set; }
 
         [NotMapped]
+        [JsonIgnore]
         public ClaimsIdentity ClaimsIdentity => new ClaimsIdentity(new Claim[] {
             new Claim(ClaimsIdentity.DefaultRoleClaimType, UserType.ToString()),
             new Claim(ClaimsIdentity.DefaultNameClaimType, Login)
