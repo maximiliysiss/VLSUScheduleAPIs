@@ -48,7 +48,7 @@ namespace NetServiceConnection.NetContext
             Rollback = () =>
             {
                 idProperty.SetValue(item, 0);
-                networkLoad.Add(address, ref item);
+                networkLoad.Add(address, item);
             };
         }
     }

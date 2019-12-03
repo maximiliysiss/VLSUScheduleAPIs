@@ -17,7 +17,7 @@ namespace NetServiceConnection.NetContext
     public interface INetworkModelAccess<T> : INetworkConstructor
     {
         List<T> Load(string address);
-        T Add(string address, ref T item);
+        T Add(string address, T item);
         void Delete(string address, int id);
         T Put(string address, int id, ref T item);
         T Get(string address, int id);
