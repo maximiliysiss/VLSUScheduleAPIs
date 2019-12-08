@@ -15,6 +15,7 @@ namespace VLSUScheduleAPIs.Services
         }
 
         public NetSet<User> Users { get; set; }
+        public NetSet<Teacher> Teachers { get; set; }
         public NetSet<Student> Students { get; set; }
     }
 }

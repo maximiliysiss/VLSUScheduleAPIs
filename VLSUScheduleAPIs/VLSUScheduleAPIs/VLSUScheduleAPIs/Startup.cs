@@ -34,7 +34,7 @@ namespace VLSUScheduleAPIs
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<RedisService>();
-            services.AddDbContext<Services.DatabaseContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<Services.DatabaseContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
 
             services.AddSwaggerGen(c =>
             {

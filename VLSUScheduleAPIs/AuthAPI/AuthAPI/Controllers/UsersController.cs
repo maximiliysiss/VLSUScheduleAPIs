@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthAPI.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "Service")]
     [ApiController]
     public class UsersController : ControllerBase
     {

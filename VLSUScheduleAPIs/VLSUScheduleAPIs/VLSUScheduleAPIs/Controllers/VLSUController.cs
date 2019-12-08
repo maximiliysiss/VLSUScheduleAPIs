@@ -92,6 +92,8 @@ namespace VLSUScheduleAPIs.Controllers
         private List<Schedule> InitSchedule()
         {
             var schedule = context.Schedules.ToList();
+            foreach (var sc in schedule)
+                sc.Teacher = authNetContext.Teachers.FirstOrDefault(x => x.ID == sc.TeacherId);
             redisService.SetObject("vlsu:schedule:current", schedule);
             return schedule;
         }
