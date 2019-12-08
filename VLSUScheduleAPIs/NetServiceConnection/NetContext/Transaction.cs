@@ -27,7 +27,7 @@ namespace NetServiceConnection.NetContext
             Action = () =>
             {
                 var elem = networkLoad.Add(address, item);
-                id = (int)idProperty.GetValue(item);
+                id = (int)idProperty.GetValue(elem);
                 idProperty.SetValue(item, id);
             };
             Rollback = () => networkLoad.Delete(address, id);

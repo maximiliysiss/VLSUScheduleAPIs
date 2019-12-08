@@ -1,9 +1,11 @@
-﻿using Commonlibrary.Services.Settings;
+﻿using Commonlibrary.Models;
+using Commonlibrary.Services.Settings;
 using Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -12,6 +14,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Commonlibrary.Controllers
@@ -30,6 +33,22 @@ namespace Commonlibrary.Controllers
                 var strLogin = await res.Content.ReadAsStringAsync();
                 return $"Bearer {JObject.Parse(strLogin)["accessToken"].Value<string>()}";
             }
+        }
+
+        public static int? UserId(this ControllerBase controllerBase)
+        {
+            var user = controllerBase.User.Claims.FirstOrDefault(x => x.Type == "User");
+            if (user == null)
+                return null;
+            return int.Parse(user.Value);
+        }
+
+        public static UserType? UserType(this ControllerBase controllerBase)
+        {
+            var user = controllerBase.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultRoleClaimType);
+            if (user == null)
+                return null;
+            return (UserType)Enum.Parse(typeof(UserType), user.Value);
         }
 
         public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app, IApplicationLifetime lifetime, string overrideAddress = null)

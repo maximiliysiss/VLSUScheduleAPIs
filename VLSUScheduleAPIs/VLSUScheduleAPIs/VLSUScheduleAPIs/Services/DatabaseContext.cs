@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using CommonLibrary.Models;
 
 namespace VLSUScheduleAPIs.Services
 {
@@ -21,6 +22,7 @@ namespace VLSUScheduleAPIs.Services
         public DbSet<IllCard> IllCards { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Institute> Institutes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,5 +36,7 @@ namespace VLSUScheduleAPIs.Services
             modelBuilder.Ignore<Teacher>();
             modelBuilder.Entity<Schedule>().Ignore(x => x.Teacher);
         }
+
+        public DbSet<CommonLibrary.Models.Institute> Institute { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Commonlibrary.Models
 {
@@ -8,6 +9,7 @@ namespace Commonlibrary.Models
         public DateTime Date { get; set; }
         public Schedule Schedule { get; set; }
         public int TeacherId { get; set; }
+        [NotMapped]
         public Teacher Teacher { get; set; }
         public bool IsDelete { get; set; } = false;
     }

@@ -45,11 +45,27 @@ namespace VLSUScheduleAPIs.Controllers
         }
 
         [HttpPost]
-        public ActionResult<List<Schedule>> GetSchedules([FromBody]Filter[] filters = null)
+        [Authorize(Roles = "Student")]
+        public ActionResult<List<Schedule>> GetStudentSchedule([FromBody]Filter[] filters)
+        {
+            if (!int.TryParse(User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value, out var id))
+                return NotFound();
+            var user = authNetContext.Students.Get(id);
+            var schedules = redisService.GetObject<List<Schedule>>("vlsu:schedule:current").Where(x => x.GroupId == user.GroupId).ToList();
+            return FilterSchedule(schedules, filters);
+        }
+
+        [HttpPost]
+        public ActionResult<List<Schedule>> GetSchedules([FromBody]Filter[] filters)
         {
             var scheduleList = redisService.GetObject<List<Schedule>>("vlsu:schedule:current");
             if (scheduleList == null)
                 scheduleList = InitSchedule();
+            return FilterSchedule(scheduleList, filters);
+        }
+
+        private List<Schedule> FilterSchedule(List<Schedule> scheduleList, Filter[] filters)
+        {
             foreach (var filter in filters)
             {
                 switch (filter.FilterType)

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Commonlibrary.Models
 {
@@ -12,6 +11,7 @@ namespace Commonlibrary.Models
         public int LessonId { get; set; }
         public Lesson Lesson { get; set; }
         public int TeacherId { get; set; }
+        [NotMapped]
         public Teacher Teacher { get; set; }
         public int GroupId { get; set; }
         public Group Group { get; set; }

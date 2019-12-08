@@ -29,7 +29,8 @@ namespace Commonlibrary.Models
         [JsonIgnore]
         public ClaimsIdentity ClaimsIdentity => new ClaimsIdentity(new Claim[] {
             new Claim(ClaimsIdentity.DefaultRoleClaimType, UserType.ToString()),
-            new Claim(ClaimsIdentity.DefaultNameClaimType, Login)
+            new Claim(ClaimsIdentity.DefaultNameClaimType, Login),
+            new Claim("User", ID.ToString())
         });
     }
 }
