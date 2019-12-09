@@ -50,7 +50,7 @@ namespace IntegrationAPI
 
             var authSettings = Configuration.GetSection("AuthSettings").Get<AuthorizeSettings>();
             services.AddSingleton(authSettings);
-
+            services.AddSingleton<RusDayOfWeekService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
             {
                 x.TokenValidationParameters = new TokenValidationParameters

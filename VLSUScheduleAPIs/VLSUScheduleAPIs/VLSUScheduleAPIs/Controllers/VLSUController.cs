@@ -10,7 +10,7 @@ using VLSUScheduleAPIs.Services;
 
 namespace VLSUScheduleAPIs.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class VLSUController : ControllerBase
     {

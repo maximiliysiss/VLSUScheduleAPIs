@@ -7,7 +7,7 @@ namespace Commonlibrary.Models
     {
         public int ID { get; set; }
         public DateTime Date { get; set; }
-        public Schedule Schedule { get; set; }
+        public virtual Schedule Schedule { get; set; }
         public int TeacherId { get; set; }
         [NotMapped]
         public Teacher Teacher { get; set; }

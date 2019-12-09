@@ -1,4 +1,5 @@
 ﻿using Commonlibrary.Models;
+using CommonLibrary.Models;
 using Consul;
 using NetServiceConnection.NetContext;
 using System;
@@ -19,5 +20,8 @@ namespace IntegrationAPI.Services
         public NetSet<IllCard> IllCards { get; set; }
         public NetSet<Lesson> Lessons { get; set; }
         public NetSet<Schedule> Schedules { get; set; }
+        public NetSet<Institute> Institutes { get; set; }
+        public NetSet<Teacher> Teachers { get; set; }
+        public NetSet<Student> Students { get; set; }
     }
 }

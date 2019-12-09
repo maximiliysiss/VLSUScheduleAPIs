@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace Commonlibrary.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var res = await client.PostAsJsonAsync($"http://{services.Value.Address}/api/auth/login", new { Login = login, Password = password });
+                var res = await client.PostAsJsonAsync($"{services.Value.Address}/api/auth/login", new { Login = login, Password = password });
                 var strLogin = await res.Content.ReadAsStringAsync();
                 return $"Bearer {JObject.Parse(strLogin)["accessToken"].Value<string>()}";
             }
@@ -51,7 +52,7 @@ namespace Commonlibrary.Controllers
             return (UserType)Enum.Parse(typeof(UserType), user.Value);
         }
 
-        public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app, IApplicationLifetime lifetime, string overrideAddress = null)
+        public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app, IApplicationLifetime lifetime)
         {
 
             var consulClient = app.ApplicationServices
@@ -63,6 +64,7 @@ namespace Commonlibrary.Controllers
                                 .GetRequiredService<ILoggerFactory>();
             var logger = loggingFactory.CreateLogger<IApplicationBuilder>();
 
+            var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
 
             var features = app.Properties["server.Features"] as FeatureCollection;
             var addresses = features.Get<IServerAddressesFeature>();
@@ -76,7 +78,7 @@ namespace Commonlibrary.Controllers
             {
                 ID = $"{consulConfig.ServiceId}",
                 Name = consulConfig.ServiceName,
-                Address = overrideAddress ?? address,
+                Address = configuration["service:name"] ?? address,
                 Port = int.Parse(port),
                 Tags = consulConfig.Tags?.ToArray() ?? new string[0]
             };

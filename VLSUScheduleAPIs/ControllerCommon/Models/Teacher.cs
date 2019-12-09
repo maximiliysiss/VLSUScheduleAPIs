@@ -9,5 +9,6 @@ namespace Commonlibrary.Models
     {
         [NotMapped]
         public List<IllCard> IllCards { get; set; }
+        public string ShortName { get; set; }
     }
 }

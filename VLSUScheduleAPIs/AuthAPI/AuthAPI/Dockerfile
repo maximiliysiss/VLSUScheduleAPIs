@@ -9,4 +9,5 @@ RUN dotnet build "AuthAPI.csproj" -c Release -o /build
 RUN dotnet publish "AuthAPI.csproj" -c Release -o /publish
 
 COPY migration.sh .
+COPY wait-for.sh .
 ENTRYPOINT ["./migration.sh", "AuthAPI.dll"]

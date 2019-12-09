@@ -43,7 +43,7 @@ namespace AuthAPI.Services
 
         public TokenResult AuthAttempt(LoginModel loginModel)
         {
-            var user = databaseContext.Users.FirstOrDefault(x => x.Login == loginModel.Login && x.Password == loginModel.Password);
+            var user = databaseContext.Users.FirstOrDefault(x => x.Login == loginModel.Login && x.Password == CryptService.CreateMD5(loginModel.Password));
             if (user == null)
                 return null;
             var token = GenerateToken(user);

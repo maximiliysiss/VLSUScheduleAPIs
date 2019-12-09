@@ -6,6 +6,7 @@ namespace Commonlibrary.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public Institute Institute { get; set; }
+        public int InstituteId { get; set; }
+        public virtual Institute Institute { get; set; }
     }
 }

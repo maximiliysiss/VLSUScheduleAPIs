@@ -43,7 +43,7 @@ namespace NetServiceConnection.NetContext
 
         private List<T> GetListModel(string data)
         {
-            var model = JsonConvert.DeserializeObject<List<T>>(data);
+            var model = JsonConvert.DeserializeObject<List<T>>(data) ?? new List<T>();
             foreach (var modelWork in ModelWorker)
                 foreach (var m in model)
                     modelWork(m);
