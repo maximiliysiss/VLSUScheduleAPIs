@@ -13,7 +13,6 @@ namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeAttribute(Roles = "Service")]
     public class GroupsController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -46,6 +45,8 @@ namespace VLSUScheduleAPIs.Controllers
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Service")]
         public async Task<IActionResult> PutGroup(int id, Group @group)
         {
             if (id != @group.ID)
@@ -76,6 +77,8 @@ namespace VLSUScheduleAPIs.Controllers
 
         // POST: api/Groups
         [HttpPost]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Service")]
         public async Task<ActionResult<Group>> PostGroup(Group @group)
         {
             _context.Groups.Add(@group);
@@ -86,6 +89,8 @@ namespace VLSUScheduleAPIs.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "Service")]
         public async Task<ActionResult<Group>> DeleteGroup(int id)
         {
             var @group = await _context.Groups.FindAsync(id);

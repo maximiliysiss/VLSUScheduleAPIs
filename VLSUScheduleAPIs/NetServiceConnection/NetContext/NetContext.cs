@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace NetServiceConnection.NetContext
 {
@@ -32,11 +33,19 @@ namespace NetServiceConnection.NetContext
                 {
                     var lazyData = prop.Attr[0];
                     var propLazy = type.GetProperty(lazyData.Id);
-                    var netSet = CreateNetSet(lazyData.Service, propLazy.PropertyType);
+                    var netSet = CreateNetSet(lazyData.Service.ToLower(), propLazy.PropertyType);
                     var getMethod = netSet.GetType().GetMethod("Get");
                     propLazy.SetValue(x, getMethod.Invoke(netSet, new[] { prop.Prop.GetValue(x) }));
                 }
             };
+        }
+
+        public async Task<string> GetAddress(string model)
+        {
+            if (addresses.ContainsKey(model))
+                return addresses[model];
+            var services = await consulClient.Agent.Services();
+            return services.Response.Select(x => x.Value).FirstOrDefault(x => x.Tags.Any(t => Regex.IsMatch(t, $"^{contextTag}.+$")))?.Address ?? string.Empty;
         }
 
         public NetContext(IConsulClient consulClient, IServiceProvider serviceProvider)
@@ -56,7 +65,7 @@ namespace NetServiceConnection.NetContext
             if (isLazy)
                 networkConstructor.ModelWorker.Add(CreateLazy(type));
             networkConstructor.PreHeader.AddRange(preHeader);
-            return Activator.CreateInstance(typeof(NetSet<>).MakeGenericType(type), addresses[name.ToLower()], networkService);
+            return Activator.CreateInstance(typeof(NetSet<>).MakeGenericType(type), name, GetAddress(name).Result, networkService, (NetContext)this);
         }
 
         public async virtual void OnConfiguration()
@@ -82,7 +91,7 @@ namespace NetServiceConnection.NetContext
             {
                 try
                 {
-                    property.SetValue(this, CreateNetSet(property.Name, property.PropertyType.GetGenericArguments()[0]));
+                    property.SetValue(this, CreateNetSet(property.Name.ToLower(), property.PropertyType.GetGenericArguments()[0]));
                 }
                 catch (System.Exception)
                 {

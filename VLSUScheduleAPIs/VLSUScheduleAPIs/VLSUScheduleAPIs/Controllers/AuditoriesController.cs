@@ -17,6 +17,7 @@ namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = "Service")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class AuditoriesController : ControllerBase
     {

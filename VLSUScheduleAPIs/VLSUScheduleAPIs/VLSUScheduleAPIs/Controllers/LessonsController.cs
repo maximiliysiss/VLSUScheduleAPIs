@@ -14,6 +14,7 @@ namespace VLSUScheduleAPIs.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AuthorizeAttribute(Roles = "Service")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class LessonsController : ControllerBase
     {
         private readonly DatabaseContext _context;

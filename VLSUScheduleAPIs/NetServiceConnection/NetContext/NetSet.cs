@@ -18,13 +18,26 @@ namespace NetServiceConnection.NetContext
             idProperty = typeof(T).GetProperty("ID");
         }
 
-        private readonly string address;
+        private readonly string name;
+        private string address;
+        public string Address
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(address))
+                    address = parent.GetAddress(name).Result;
+                return address;
+            }
+        }
+        private readonly NetContext parent;
         private readonly INetworkModelAccess<T> networkLoad;
         public List<ModelTransaction> Transactions { get; set; } = new List<ModelTransaction>();
 
-        public NetSet(string address, INetworkModelAccess<T> networkLoad)
+        public NetSet(string name, string address, INetworkModelAccess<T> networkLoad, NetContext netContext)
         {
+            this.name = name;
             this.address = address;
+            this.parent = netContext;
             this.networkLoad = networkLoad;
         }
 
