@@ -56,8 +56,6 @@ namespace NetServiceConnection.NetContext
             if (isLazy)
                 networkConstructor.ModelWorker.Add(CreateLazy(type));
             networkConstructor.PreHeader.AddRange(preHeader);
-            if (!addresses.ContainsKey(name.ToLower()))
-                OnConfiguration();
             return Activator.CreateInstance(typeof(NetSet<>).MakeGenericType(type), addresses[name.ToLower()], networkService);
         }
 
