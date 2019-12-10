@@ -13,6 +13,7 @@ namespace AuthAPI.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = "Service")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class TeachersController : ControllerBase
     {

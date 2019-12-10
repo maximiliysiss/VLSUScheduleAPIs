@@ -18,10 +18,12 @@ namespace VLSUScheduleAPIs.Controllers
     public class SchedulesController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly ScheduleChanger scheduleChanger;
 
-        public SchedulesController(DatabaseContext context)
+        public SchedulesController(DatabaseContext context, ScheduleChanger scheduleChanger)
         {
             _context = context;
+            this.scheduleChanger = scheduleChanger;
         }
 
         // GET: api/Schedules
@@ -71,7 +73,7 @@ namespace VLSUScheduleAPIs.Controllers
                     throw;
                 }
             }
-
+            scheduleChanger.Reload("vlsu.schedule.change", schedule);
             return NoContent();
         }
 
@@ -81,7 +83,7 @@ namespace VLSUScheduleAPIs.Controllers
         {
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
-
+            scheduleChanger.Reload("vlsu.schedule.add", schedule);
             return CreatedAtAction("GetSchedule", new { id = schedule.ID }, schedule);
         }
 
@@ -97,7 +99,7 @@ namespace VLSUScheduleAPIs.Controllers
 
             _context.Schedules.Remove(schedule);
             await _context.SaveChangesAsync();
-
+            scheduleChanger.Reload("vlsu.schedule.delete", schedule);
             return schedule;
         }
 

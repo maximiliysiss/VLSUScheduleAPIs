@@ -63,7 +63,7 @@ namespace VLSUScheduleAPIs.Controllers
                 illCard.TeacherId = this.UserId().Value;
             _context.IllCards.Add(illCard);
             await _context.SaveChangesAsync();
-            scheduleChanger.Reload("ill", illCard);
+            scheduleChanger.Reload("vlsu.ill.add", illCard);
             return CreatedAtAction("GetIllCard", new { id = illCard.ID }, illCard);
         }
 
@@ -78,6 +78,7 @@ namespace VLSUScheduleAPIs.Controllers
             illCard.IsDelete = true;
             _context.IllCards.Update(illCard);
             await _context.SaveChangesAsync();
+            scheduleChanger.Reload("vlsu.ill.delete", illCard);
             return illCard;
         }
     }

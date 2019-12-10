@@ -18,12 +18,14 @@ namespace VLSUScheduleAPIs.Controllers
         private readonly AuthNetContext authNetContext;
         private readonly DatabaseContext context;
         private readonly RedisService redisService;
+        private readonly ScheduleChanger scheduleChanger;
 
-        public VLSUController(DatabaseContext context, RedisService redisService, AuthNetContext authNetContext)
+        public VLSUController(AuthNetContext authNetContext, DatabaseContext context, RedisService redisService, ScheduleChanger scheduleChanger)
         {
+            this.authNetContext = authNetContext;
             this.context = context;
             this.redisService = redisService;
-            this.authNetContext = authNetContext;
+            this.scheduleChanger = scheduleChanger;
         }
 
         [HttpGet]
@@ -39,7 +41,7 @@ namespace VLSUScheduleAPIs.Controllers
             var isOdd = offset < 0 ? true : ((int)(offset / 7) % 2) == 1;
             var scheduleList = redisService.GetObject<List<Schedule>>("vlsu:schedule:current");
             if (scheduleList == null)
-                scheduleList = InitSchedule();
+                scheduleList = scheduleChanger.Create();
             return scheduleList.Where(x => x.DayOfWeek == date.DayOfWeek && x.GroupId == @class && x.Odd == isOdd).ToList();
         }
 
@@ -54,15 +56,6 @@ namespace VLSUScheduleAPIs.Controllers
             filterResults.AddRange(context.Lessons.Where(x => x.Name.Contains(filter, StringComparison.OrdinalIgnoreCase))
                 .Select(x => new FilterResult { FilterType = FilterType.Lesson, ID = x.ID, Value = x.Name }));
             return filterResults;
-        }
-
-        private List<Schedule> InitSchedule()
-        {
-            var schedule = context.Schedules.ToList();
-            foreach (var sc in schedule)
-                sc.Teacher = authNetContext.Teachers.FirstOrDefault(x => x.ID == sc.TeacherId);
-            redisService.SetObject("vlsu:schedule:current", schedule);
-            return schedule;
         }
     }
 }

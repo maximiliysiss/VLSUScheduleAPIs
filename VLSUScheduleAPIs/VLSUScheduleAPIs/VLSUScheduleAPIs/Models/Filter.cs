@@ -2,7 +2,6 @@
 {
     public enum FilterType
     {
-        Default,
         Teacher,
         Group,
         Lesson
