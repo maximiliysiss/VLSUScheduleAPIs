@@ -9,4 +9,7 @@ RUN dotnet build "VLSUScheduleAPIs.csproj" -c Release -o /build
 RUN dotnet publish "VLSUScheduleAPIs.csproj" -c Release -o /publish
 
 COPY migration.sh .
-ENTRYPOINT ["./migration.sh", "VLSUScheduleAPIs.dll"]
+RUN chmod +x migration.sh
+COPY wait /wait
+RUN chmod +x /wait
+CMD /wait && sh ./migration.sh VLSUScheduleAPIs.dll

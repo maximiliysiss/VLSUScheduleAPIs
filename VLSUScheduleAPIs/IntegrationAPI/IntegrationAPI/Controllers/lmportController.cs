@@ -73,7 +73,19 @@ namespace IntegrationAPI.Controllers
 
                         var teacher = vlsuContext.Teachers.FirstOrDefault(x => x.ShortName == teacherName);
                         if (teacher == null)
-                            return BadRequest("Teacher not found");
+                        {
+                            teacher = new Teacher
+                            {
+                                Birthday = DateTime.Today,
+                                FIO = teacherName,
+                                Login = teacherName,
+                                Password = Guid.NewGuid().ToString(),
+                                ShortName = teacherName,
+                                UserType = UserType.Teacher
+                            };
+                            vlsuContext.Teachers.Add(teacher);
+                            vlsuContext.Commit();
+                        }
 
                         var group = vlsuContext.Groups.FirstOrDefault(x => x.Name == groupName && x.InstituteId == institute.ID);
                         if (group == null)

@@ -18,4 +18,6 @@ RUN dotnet publish "IntegrationAPI.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "IntegrationAPI.dll"]
+COPY wait /wait
+RUN chmod +x /wait
+CMD /wait && dotnet IntegrationAPI.dll

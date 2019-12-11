@@ -61,6 +61,10 @@ namespace VLSUScheduleAPIs.Controllers
         {
             if (IsTeacher)
                 illCard.TeacherId = this.UserId().Value;
+            var schedule = _context.Schedules.FirstOrDefault(x => x.ID == illCard.ScheduleId);
+            if (schedule == null || schedule.TeacherId != illCard.TeacherId)
+                return NotFound();
+
             _context.IllCards.Add(illCard);
             await _context.SaveChangesAsync();
             scheduleChanger.Reload("vlsu.ill.add", illCard);

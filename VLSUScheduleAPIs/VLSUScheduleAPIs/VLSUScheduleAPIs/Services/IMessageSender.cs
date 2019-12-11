@@ -14,8 +14,8 @@ namespace VLSUScheduleAPIs.Services
 
     public class RabbitMessageSender : IMessageSender
     {
-        ILogger<RabbitMessageSender> logger;
-        IConfiguration configuration;
+        private readonly ILogger<RabbitMessageSender> logger;
+        private readonly IConfiguration configuration;
 
         public RabbitMessageSender(ILogger<RabbitMessageSender> logger, IConfiguration configuration)
         {
@@ -30,7 +30,7 @@ namespace VLSUScheduleAPIs.Services
 
         public void SendMessage(string header, object obj)
         {
-            var factory = new ConnectionFactory() { HostName = configuration["rabbit:host"] };
+            var factory = new ConnectionFactory() { HostName = configuration["rabbit:host"], UserName = configuration["rabbit:user"], Password = configuration["rabbit:password"] };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -40,7 +40,7 @@ namespace VLSUScheduleAPIs.Services
                 var routingKey = header;
                 var message = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
                 var body = Encoding.UTF8.GetBytes(message);
-                channel.BasicPublish(exchange: "topic_logs",
+                channel.BasicPublish(exchange: configuration["rabbit:topic"],
                                      routingKey: routingKey,
                                      basicProperties: null,
                                      body: body);

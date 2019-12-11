@@ -41,21 +41,6 @@ namespace IntegrationAPI.Controllers
             return illCard;
         }
 
-        // PUT: api/IllCards/5
-        [HttpPut("{id}")]
-        public IActionResult PutIllCard(int id, IllCard illCard)
-        {
-            if (id != illCard.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.IllCards.Update(illCard);
-            _context.Commit();
-
-            return NoContent();
-        }
-
         // POST: api/IllCards
         [HttpPost]
         public ActionResult<IllCard> PostIllCard(IllCard illCard)
