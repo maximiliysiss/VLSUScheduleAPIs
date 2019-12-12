@@ -13,7 +13,10 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class IllCardsController : ControllerBase
     {
-        VlsuContext _context;
+        /// <summary>
+        /// NetContext
+        /// </summary>
+        private readonly VlsuContext _context;
 
         public IllCardsController(VlsuContext context)
         {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Commonlibrary.Models;
 using IntegrationAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntegrationAPI.Controllers
@@ -13,7 +10,10 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class AuditoriesController : ControllerBase
     {
-        VlsuContext _context;
+        /// <summary>
+        /// NetContext
+        /// </summary>
+        private readonly VlsuContext _context;
 
         public AuditoriesController(VlsuContext _context)
         {
@@ -48,6 +48,10 @@ namespace IntegrationAPI.Controllers
             {
                 return BadRequest();
             }
+
+            var currentAuditory = _context.Auditories.Get(id);
+            if (currentAuditory == null)
+                return NotFound();
 
             _context.Auditories.Update(auditory);
             _context.Commit();

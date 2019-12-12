@@ -11,6 +11,9 @@ namespace AuthAPI.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
+        /// <summary>
+        /// NetContext
+        /// </summary>
         private readonly VlsuContext _context;
 
         public StudentsController(VlsuContext context)
@@ -44,14 +47,13 @@ namespace AuthAPI.Controllers
         public IActionResult PutStudent(int id, Student student)
         {
             if (id != student.ID)
-            {
                 return BadRequest();
-            }
 
             student.UserType = UserType.Student;
-
-            var currentUser = _context.Students.Get(id);
-            if (currentUser != null && currentUser.Password != student.Password)
+            var currentStudent = _context.Students.Get(id);
+            if (currentStudent == null)
+                return NotFound();
+            if (currentStudent.Password != student.Password)
                 student.Password = CryptService.CreateMD5(student.Password);
 
             _context.Students.Update(student);

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Commonlibrary.Models;
 using IntegrationAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntegrationAPI.Controllers
@@ -13,7 +10,10 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class LessonsController : ControllerBase
     {
-        VlsuContext _context;
+        /// <summary>
+        /// NetContext
+        /// </summary>
+        private readonly VlsuContext _context;
 
         public LessonsController(VlsuContext context)
         {
@@ -49,6 +49,10 @@ namespace IntegrationAPI.Controllers
             {
                 return BadRequest();
             }
+
+            var currentLesson = _context.Lessons.Get(id);
+            if (currentLesson == null)
+                return NotFound();
 
             _context.Lessons.Update(lesson);
             _context.Commit();

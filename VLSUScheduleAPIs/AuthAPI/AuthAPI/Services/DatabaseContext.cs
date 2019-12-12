@@ -36,9 +36,15 @@ namespace AuthAPI.Services
             modelBuilder.Entity<User>().HasData(
                 new User { ID = 1, Login = "VlsuScheduleAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("VlsuSchedule") },
                 new User { ID = 2, Login = "IntegrationAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("IntegrationAPI") },
-                new User { ID = 3, Login = "AuthAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("AuthAPI") },
-                new User { ID = 4, Login = "Teacher", UserType = UserType.Teacher, Password = CryptService.CreateMD5("Teacher") },
-                new User { ID = 5, Login = "Student", UserType = UserType.Student, Password = CryptService.CreateMD5("Student") }
+                new User { ID = 3, Login = "AuthAPI", UserType = UserType.Service, Password = CryptService.CreateMD5("AuthAPI") }
+            );
+
+            modelBuilder.Entity<Teacher>().HasData(
+                 new Teacher { ID = 4, Login = "Teacher", UserType = UserType.Teacher, Password = CryptService.CreateMD5("Teacher") }
+            );
+
+            modelBuilder.Entity<Student>().HasData(
+                 new Student { ID = 5, Login = "Student", UserType = UserType.Student, Password = CryptService.CreateMD5("Student") }
             );
         }
     }

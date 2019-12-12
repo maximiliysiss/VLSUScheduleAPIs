@@ -11,6 +11,9 @@ namespace AuthAPI.Controllers
     [ApiController]
     public class TeachersController : ControllerBase
     {
+        /// <summary>
+        /// NetContext
+        /// </summary>
         private readonly VlsuContext _context;
 
         public TeachersController(VlsuContext context)
@@ -50,7 +53,9 @@ namespace AuthAPI.Controllers
 
             teacher.UserType = UserType.Teacher;
             var currentTeacher = _context.Teachers.Get(id);
-            if (currentTeacher != null && currentTeacher.Password != teacher.Password)
+            if (currentTeacher == null)
+                return NotFound();
+            if (currentTeacher.Password != teacher.Password)
                 teacher.Password = CryptService.CreateMD5(teacher.Password);
 
             _context.Teachers.Update(teacher);

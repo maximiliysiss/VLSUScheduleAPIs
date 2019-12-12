@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AuthAPI.Services;
@@ -54,6 +52,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
+            teacher.UserType = UserType.Teacher;
             _context.Entry(teacher).State = EntityState.Modified;
 
             try
@@ -79,6 +78,7 @@ namespace AuthAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Teacher>> PostTeacher(Teacher teacher)
         {
+            teacher.UserType = UserType.Teacher;
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 

@@ -1,10 +1,14 @@
 ﻿using AuthAPI.Models;
 using AuthAPI.Services;
+using CommonLibrary.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Controllers
 {
+    /// <summary>
+    /// Authorize
+    /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -16,6 +20,11 @@ namespace AuthAPI.Controllers
             this.authService = authService;
         }
 
+        /// <summary>
+        /// Login by login/password
+        /// </summary>
+        /// <param name="loginModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult<TokenResult> Login(LoginModel loginModel)
         {
@@ -25,23 +34,31 @@ namespace AuthAPI.Controllers
             return loginResult;
         }
 
+        /// <summary>
+        /// Refresh Token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
         [HttpGet]
-        public ActionResult<TokenResult> Refresh()
+        public ActionResult<TokenResult> Refresh([FromHeader]string token, [FromHeader]string refreshToken)
         {
-            var token = Request.Headers["token"];
-            var refreshToken = Request.Headers["refresh"];
-            if (token.Count != 1 || refreshToken.Count != 1)
-                return BadRequest();
+            if (StringUtils.IsNullOrEmpty(token, refreshToken))
+                return NotFound();
 
-            var refreshResult = authService.RefreshToken(token[0] ?? string.Empty, refreshToken[0] ?? string.Empty);
+            var refreshResult = authService.RefreshToken(token, refreshToken);
             if (refreshResult == null)
                 return BadRequest();
 
             return refreshResult;
         }
 
+        /// <summary>
+        /// Login by token
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public ActionResult Try() => Ok();
+        public ActionResult Login() => Ok();
     }
 }

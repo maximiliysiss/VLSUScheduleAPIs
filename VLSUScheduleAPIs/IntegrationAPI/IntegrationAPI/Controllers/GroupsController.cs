@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Commonlibrary.Models;
 using IntegrationAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntegrationAPI.Controllers
@@ -13,7 +10,10 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        VlsuContext _context;
+        /// <summary>
+        /// NetContext
+        /// </summary>
+        private readonly VlsuContext _context;
 
         public GroupsController(VlsuContext context)
         {
@@ -49,6 +49,10 @@ namespace IntegrationAPI.Controllers
             {
                 return BadRequest();
             }
+
+            var currentGroup = _context.Groups.Get(id);
+            if (currentGroup == null)
+                return NotFound();
 
             _context.Groups.Update(@group);
 

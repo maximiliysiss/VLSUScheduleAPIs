@@ -13,7 +13,7 @@ namespace VLSUScheduleAPIs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeAttribute(Roles = "Service")]
+    [Authorize(Roles = "Service")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class LessonsController : ControllerBase
     {

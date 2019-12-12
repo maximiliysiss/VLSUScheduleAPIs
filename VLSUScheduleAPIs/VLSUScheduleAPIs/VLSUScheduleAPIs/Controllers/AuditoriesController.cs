@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Commonlibrary.Models;
 using VLSUScheduleAPIs.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Commonlibrary.Services.Settings;
-using Microsoft.AspNetCore.Mvc.Internal;
-using System.Collections;
 
 namespace VLSUScheduleAPIs.Controllers
 {

@@ -13,7 +13,10 @@ namespace IntegrationAPI.Controllers
     [ApiController]
     public class SchedulesController : ControllerBase
     {
-        VlsuContext _context;
+        /// <summary>
+        /// NetContext
+        /// </summary>
+        private readonly VlsuContext _context;
 
         public SchedulesController(VlsuContext context)
         {
@@ -49,6 +52,10 @@ namespace IntegrationAPI.Controllers
             {
                 return BadRequest();
             }
+
+            var currentSchedule = _context.Schedules.Get(id);
+            if (currentSchedule == null)
+                return NotFound();
 
             _context.Schedules.Update(schedule);
             _context.Commit();
