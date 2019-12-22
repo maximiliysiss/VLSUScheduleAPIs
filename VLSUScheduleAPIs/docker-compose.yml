@@ -12,7 +12,7 @@ services:
       SA_PASSWORD: "Your_password123"
       ACCEPT_EULA: "Y"
     ports:
-      - "1433:1433"
+      - "1437:1433"
     networks:
       - app-tier
 
@@ -83,7 +83,7 @@ services:
       - app-tier
     environment:
       WAIT_HOSTS: consul:8500, vlsuscheduleapis:80, authapi:80
-      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_HOSTS_TIMEOUT: 600
     depends_on:
       - consul
       - authapi

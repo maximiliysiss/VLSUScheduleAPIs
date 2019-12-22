@@ -21,6 +21,7 @@ namespace Commonlibrary.Models
         public string FIO { get; set; }
         public DateTime Birthday { get; set; }
         public string Login { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
         public UserType UserType { get; set; }
         [JsonIgnore]

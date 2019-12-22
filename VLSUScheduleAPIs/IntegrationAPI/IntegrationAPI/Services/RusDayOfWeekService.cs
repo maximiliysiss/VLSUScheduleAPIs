@@ -8,15 +8,15 @@ namespace IntegrationAPI.Services
     public class RusDayOfWeekService
     {
         private static Dictionary<string, DayOfWeek> rusDayOfWeeks = new Dictionary<string, DayOfWeek> {
-            { "Понедельник", DayOfWeek.Monday},
-            { "Вторник", DayOfWeek.Tuesday},
-            { "Среда", DayOfWeek.Wednesday},
-            { "Четверг", DayOfWeek.Thursday},
-            { "Пятница", DayOfWeek.Friday},
-            { "Суббота", DayOfWeek.Saturday},
-            { "Воскресение", DayOfWeek.Sunday},
+            { "понедельник", DayOfWeek.Monday},
+            { "вторник", DayOfWeek.Tuesday},
+            { "среда", DayOfWeek.Wednesday},
+            { "четверг", DayOfWeek.Thursday},
+            { "пятница", DayOfWeek.Friday},
+            { "суббота", DayOfWeek.Saturday},
+            { "воскресение", DayOfWeek.Sunday},
         };
 
-        public DayOfWeek this[string index] => rusDayOfWeeks[index];
+        public DayOfWeek this[string index] => rusDayOfWeeks[index.ToLower()];
     }
 }
