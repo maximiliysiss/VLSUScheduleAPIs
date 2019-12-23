@@ -44,7 +44,10 @@ namespace IntegrationAPI
             var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
             var authService = Configuration.GetSection("AuthService").Get<AuthorizeService>();
             services.AddSingleton(consulSettings);
-            services.AddNetContext<VlsuContext>();
+            services.AddNetContext(x => new VlsuContext(x.GetService<IConsulClient>(), x, y =>
+            {
+                y.UserAuthorization(() => Extension.LoginService(x, Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
+            }));
             services.AddSingleton<IConsulClient, ConsulClient>(p =>
                             new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
 
@@ -73,7 +76,6 @@ namespace IntegrationAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            vlsuContext.UserAuthorization(() => app.LoginService(Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

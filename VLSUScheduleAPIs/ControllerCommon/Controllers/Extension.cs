@@ -22,10 +22,11 @@ namespace Commonlibrary.Controllers
 {
     public static class Extension
     {
-        public static async Task<string> LoginService(this IApplicationBuilder app, string login, string password)
+        public static async Task<string> LoginService(IServiceProvider app, string login, string password)
         {
-            var consulClient = app.ApplicationServices
-                                .GetRequiredService<IConsulClient>();
+            var logger = app.GetRequiredService<ILogger<IApplicationBuilder>>();
+            logger.LogInformation($"Login {login}:{password}");
+            var consulClient = app.GetRequiredService<IConsulClient>();
             var services = consulClient.Agent.Services().Result.Response.FirstOrDefault(x => x.Value.Service.Contains("auth", StringComparison.OrdinalIgnoreCase));
             using (HttpClient client = new HttpClient())
             {

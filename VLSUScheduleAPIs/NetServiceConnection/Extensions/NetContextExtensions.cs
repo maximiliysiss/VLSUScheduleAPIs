@@ -22,10 +22,10 @@ namespace NetServiceConnection.Extensions
             services.AddSingleton<T>();
         }
 
-        public static void AddNetContext<T>(this IServiceCollection services, Func<IServiceProvider, T> construct, Type networkAccess = null) where T : NetContext.NetContext
+        public static void AddNetContext<T>(this IServiceCollection services, Func<IServiceProvider, T> config, Type networkAccess = null) where T : NetContext.NetContext
         {
             services.AddSingleton(typeof(INetworkModelAccess<>), networkAccess ?? typeof(HttpLoad<>));
-            services.AddSingleton(construct);
+            services.AddSingleton(config);
         }
     }
 }

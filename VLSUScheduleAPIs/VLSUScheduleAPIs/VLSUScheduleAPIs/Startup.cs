@@ -13,6 +13,8 @@ using System;
 using VLSUScheduleAPIs.Services;
 using Commonlibrary.Controllers;
 using NetServiceConnection.Extensions;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace VLSUScheduleAPIs
 {
@@ -29,8 +31,6 @@ namespace VLSUScheduleAPIs
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSingleton<RedisService>();
-            services.AddDbContext<Services.DatabaseContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
 
             services.AddSwaggerGen(c =>
             {
@@ -42,9 +42,22 @@ namespace VLSUScheduleAPIs
                 });
             });
 
+            var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
+            services.AddSingleton(consulSettings);
+            services.AddNetContext(x => new AuthNetContext(x.GetService<IConsulClient>(), x, y =>
+            {
+                y.UserAuthorization(() => Extension.LoginService(x, Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
+            }));
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
+
+            services.AddSingleton<IMessageSender, RabbitMessageSender>();
+            services.AddSingleton<ScheduleChanger>();
+
+            services.AddSingleton<RedisService>();
+            services.AddDbContext<Services.DatabaseContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
+
             var authSettings = Configuration.GetSection("AuthSettings").Get<AuthorizeSettings>();
             services.AddSingleton(authSettings);
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
             {
                 x.TokenValidationParameters = new TokenValidationParameters
@@ -57,19 +70,11 @@ namespace VLSUScheduleAPIs
                     IssuerSigningKey = authSettings.SecurityKey
                 };
             });
-
-            var consulSettings = Configuration.GetSection("consulConfig").Get<ConsulSettings>();
-            services.AddSingleton(consulSettings);
-            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig => consulConfig.Address = new Uri(consulSettings.Address)));
-
-            services.AddNetContext<AuthNetContext>();
-            services.AddSingleton<IMessageSender, RabbitMessageSender>();
-            services.AddSingleton<ScheduleChanger>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime,
-                                RedisService redisService, AuthNetContext authNetContext)
+                                RedisService redisService, AuthNetContext authNetContext, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -77,8 +82,6 @@ namespace VLSUScheduleAPIs
             }
 
             redisService.Connect();
-
-            authNetContext.UserAuthorization(() => app.LoginService(Configuration["servicelogin:login"], Configuration["servicelogin:password"]).Result);
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

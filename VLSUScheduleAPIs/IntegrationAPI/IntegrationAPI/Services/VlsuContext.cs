@@ -11,7 +11,7 @@ namespace IntegrationAPI.Services
 {
     public class VlsuContext : NetContext
     {
-        public VlsuContext(IConsulClient consulClient, IServiceProvider serviceProvider) : base(consulClient, serviceProvider)
+        public VlsuContext(IConsulClient consulClient, IServiceProvider serviceProvider, Action<NetContext> configAction) : base(consulClient, serviceProvider, configAction)
         {
         }
 

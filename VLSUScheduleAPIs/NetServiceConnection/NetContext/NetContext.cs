@@ -1,11 +1,11 @@
 ﻿using Consul;
+using Microsoft.Extensions.Logging;
 using NetServiceConnection.NetAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -53,7 +53,16 @@ namespace NetServiceConnection.NetContext
             this.consulClient = consulClient;
             this.type = this.GetType();
             this.serviceProvider = serviceProvider;
+            OnConfiguration();
+        }
 
+        public NetContext(IConsulClient consulClient, IServiceProvider serviceProvider, Action<NetContext> configAction)
+        {
+            this.consulClient = consulClient;
+            this.type = this.GetType();
+            this.serviceProvider = serviceProvider;
+
+            configAction(this);
             OnConfiguration();
         }
 

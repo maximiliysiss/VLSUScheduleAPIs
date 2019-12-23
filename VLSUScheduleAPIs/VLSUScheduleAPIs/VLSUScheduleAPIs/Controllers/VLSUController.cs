@@ -39,7 +39,7 @@ namespace VLSUScheduleAPIs.Controllers
                 startYearDate = startYearDate.AddDays(8 - startYearDate.DayOfWeek.ToInt());
             var offset = (date - startYearDate).TotalDays - (8 - startYearDate.DayOfWeek.ToInt());
             var isOdd = offset < 0 ? true : ((int)(offset / 7) % 2) == 1;
-            var scheduleList = redisService.GetObject<List<Schedule>>("vlsu:schedule:current");
+            var scheduleList = scheduleChanger.Load();
             if (scheduleList == null)
                 scheduleList = scheduleChanger.Create();
             return scheduleList.Where(x => x.DayOfWeek == date.DayOfWeek && x.GroupId == @class && x.Odd == isOdd).ToList();

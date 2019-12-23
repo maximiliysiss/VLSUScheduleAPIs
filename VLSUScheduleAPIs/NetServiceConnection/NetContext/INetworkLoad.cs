@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -25,8 +26,11 @@ namespace NetServiceConnection.NetContext
 
     public class HttpLoad<T> : INetworkModelAccess<T>
     {
-        public HttpLoad()
+        private readonly ILogger<HttpLoad<T>> logger;
+
+        public HttpLoad(ILogger<HttpLoad<T>> logger)
         {
+            this.logger = logger;
             PreHeader.Add(x => x.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")));
         }
 
@@ -53,6 +57,7 @@ namespace NetServiceConnection.NetContext
         public HttpClient CreateHttpClient()
         {
             var httpClient = new HttpClient();
+            logger.LogInformation($"pre header {PreHeader.Count}");
             foreach (var pre in PreHeader)
                 pre(httpClient);
             return httpClient;
@@ -80,7 +85,9 @@ namespace NetServiceConnection.NetContext
         {
             using (var httpClient = CreateHttpClient())
             {
+                logger.LogInformation($"Load get by {address}/{id}");
                 var response = httpClient.GetAsync($"{address}/{id}").Result;
+                logger.LogInformation($"Response get by {address}/{id}, code {response.StatusCode}");
                 return GetModel(response.Content.ReadAsStringAsync().Result);
             }
         }
