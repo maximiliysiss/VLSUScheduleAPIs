@@ -82,7 +82,7 @@ namespace VLSUScheduleAPIs.Controllers
             illCard.IsDelete = true;
             _context.IllCards.Update(illCard);
             await _context.SaveChangesAsync();
-            scheduleChanger.Reload("vlsu.ill.delete", illCard);
+            scheduleChanger.Reload("vlsu.ill.delete", illCard, ReloadType.Delete);
             return illCard;
         }
     }

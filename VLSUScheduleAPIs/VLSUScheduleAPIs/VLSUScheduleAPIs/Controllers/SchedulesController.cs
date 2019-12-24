@@ -99,7 +99,7 @@ namespace VLSUScheduleAPIs.Controllers
 
             _context.Schedules.Remove(schedule);
             await _context.SaveChangesAsync();
-            scheduleChanger.Reload("vlsu.schedule.delete", schedule);
+            scheduleChanger.Reload("vlsu.schedule.delete", schedule, ReloadType.Delete);
             return schedule;
         }
 

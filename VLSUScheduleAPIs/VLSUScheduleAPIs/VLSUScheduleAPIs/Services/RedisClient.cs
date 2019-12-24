@@ -5,6 +5,7 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace VLSUScheduleAPIs.Services
@@ -62,19 +63,33 @@ namespace VLSUScheduleAPIs.Services
             return await db.StringGetAsync(key);
         }
 
-        public bool SetObject<T>(string key, T obj) where T : class
+        public bool SetObject<T>(string key, T obj, TimeSpan? expiry = null) where T : class
         {
             var db = _redis.GetDatabase();
-            return db.StringSet(key, JsonConvert.SerializeObject(obj));
+            return db.StringSet(key, JsonConvert.SerializeObject(obj), expiry);
         }
 
         public T GetObject<T>(string key) where T : class
         {
-            var db = _redis.GetDatabase(); 
+            var db = _redis.GetDatabase();
             var strRes = db.StringGet(key);
             if (!strRes.HasValue)
                 return null;
             return JsonConvert.DeserializeObject<T>(strRes);
         }
-    } 
+
+        public List<T> GetObjectByKeysSet<T>(string key) where T : class
+        {
+            EndPoint endPoint = _redis.GetEndPoints().First();
+            RedisKey[] keys = _redis.GetServer(endPoint).Keys(pattern: key).ToArray();
+            var db = _redis.GetDatabase();
+            return keys.Select(x => JsonConvert.DeserializeObject<T>(db.StringGet(x))).ToList();
+        }
+
+        public bool Delete(string key)
+        {
+            var db = _redis.GetDatabase();
+            return db.KeyDelete(key);
+        }
+    }
 }
