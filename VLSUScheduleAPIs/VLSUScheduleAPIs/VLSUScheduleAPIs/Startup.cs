@@ -74,7 +74,7 @@ namespace VLSUScheduleAPIs
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime,
-                                RedisService redisService, AuthNetContext authNetContext, ILogger<Startup> logger)
+                                RedisService redisService, AuthNetContext authNetContext, ILogger<Startup> logger, ScheduleChanger scheduleChanger)
         {
             if (env.IsDevelopment())
             {
@@ -91,6 +91,8 @@ namespace VLSUScheduleAPIs
 
             app.RegisterWithConsul(applicationLifetime);
             app.UseMvc();
+
+            scheduleChanger.Create();
         }
     }
 }

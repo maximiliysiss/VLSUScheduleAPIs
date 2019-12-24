@@ -43,16 +43,14 @@ namespace VLSUScheduleAPIs.Services
             using (var scope = services.CreateScope())
             {
                 DatabaseContext databaseContext = scope.ServiceProvider.GetService<DatabaseContext>();
+                var teachersList = authNetContext.Teachers.ToList();
                 var ills = databaseContext.IllCards.Where(x => x.Date.Date >= DateTime.Today && !x.IsDelete).ToList();
                 var data = databaseContext.Schedules.ToList();
                 logger.LogInformation($"Load {data.Count} schedules");
                 foreach (var sh in data)
-                {
-                    logger.LogInformation($"Load teacher {sh.TeacherId}");
-                    sh.Teacher = authNetContext.Teachers.Get(sh.TeacherId);
-                }
+                    sh.Teacher = teachersList.FirstOrDefault(x => x.ID == sh.TeacherId);
                 foreach (var sh in data)
-                    redisService.SetObject($"{name}{sh.ID}:{(int)sh.DayOfWeek}:{sh.GroupId}:{sh.Odd}", sh);
+                    redisService.SetObject($"{name}{sh.ID}:{(int)sh.DayOfWeek}:{sh.GroupId}:{sh.Odd}:{sh.TeacherId}:{sh.LessonId}", sh);
                 foreach (var ill in ills)
                     redisService.SetObject($"{illName}{ill.ID}", ill, (ill.Date.Date.AddDays(1) - DateTime.Now));
 

@@ -13,26 +13,16 @@ namespace VLSUScheduleAPIs.Controllers
     [ApiController]
     public class VLSUController : ControllerBase
     {
-        private List<Schedule> Schedules(string filter = null)
-        {
-            var load = scheduleChanger.Load(filter);
-            if (load != null && load.Count > 0)
-                return load;
-
-            scheduleChanger.Create();
-            return scheduleChanger.Load(filter);
-        }
+        private List<Schedule> Schedules(string filter = null) => scheduleChanger.Load(filter);
 
         private readonly AuthNetContext authNetContext;
         private readonly DatabaseContext context;
-        private readonly RedisService redisService;
         private readonly ScheduleChanger scheduleChanger;
 
-        public VLSUController(AuthNetContext authNetContext, DatabaseContext context, RedisService redisService, ScheduleChanger scheduleChanger)
+        public VLSUController(AuthNetContext authNetContext, DatabaseContext context, ScheduleChanger scheduleChanger)
         {
             this.authNetContext = authNetContext;
             this.context = context;
-            this.redisService = redisService;
             this.scheduleChanger = scheduleChanger;
         }
 
@@ -40,14 +30,7 @@ namespace VLSUScheduleAPIs.Controllers
         public List<Schedule> GetScheduleByDate(int @class, int year, int month, int day)
         {
             var date = new DateTime(year, month, day);
-            var startYearDate = new DateTime(date.Year, 9, 1);
-            if (date < startYearDate)
-                startYearDate = new DateTime(date.Year - 1, 9, 1);
-            if (startYearDate.DayOfWeek.In(DayOfWeek.Saturday, DayOfWeek.Sunday))
-                startYearDate = startYearDate.AddDays(8 - startYearDate.DayOfWeek.ToInt());
-            var offset = (date - startYearDate).TotalDays - (8 - startYearDate.DayOfWeek.ToInt());
-            var isOdd = offset < 0 ? true : ((int)(offset / 7) % 2) == 1;
-            return Schedules($"{scheduleChanger.name}*:{(int)date.DayOfWeek}:{@class}:{isOdd}").OrderBy(x => x.Time.TimeOfDay).ToList();
+            return Schedules($"{scheduleChanger.name}*:{(int)date.DayOfWeek}:{@class}:{date.IsOdd()}:*").OrderBy(x => x.Time.TimeOfDay).ToList();
         }
 
         [HttpGet]
@@ -63,17 +46,34 @@ namespace VLSUScheduleAPIs.Controllers
             return filterResults;
         }
 
+        [HttpPost("{year}/{month}/{day}")]
+        public List<Schedule> Filter(FilterResult filter, int year, int month, int day)
+        {
+            var date = new DateTime(year, month, day);
+            switch (filter.FilterType)
+            {
+                case FilterType.Teacher:
+                    return Schedules($"{scheduleChanger.name}*:{(int)date.DayOfWeek}:*:{date.IsOdd()}:{filter.ID}:*").OrderBy(x => x.Time.TimeOfDay).ToList();
+                case FilterType.Group:
+                    return Schedules($"{scheduleChanger.name}*:{(int)date.DayOfWeek}:{filter.ID}:{date.IsOdd()}:*").OrderBy(x => x.Time.TimeOfDay).ToList();
+                case FilterType.Lesson:
+                    return Schedules($"{scheduleChanger.name}*:{(int)date.DayOfWeek}:*:{date.IsOdd()}:*:{filter.ID}").OrderBy(x => x.Time.TimeOfDay).ToList();
+            }
+            return null;
+        }
+
         [HttpPost]
-        public List<Schedule> Filter(FilterResult filter)
+        [ActionName("Filter")]
+        public List<Schedule> FilterFull(FilterResult filter)
         {
             switch (filter.FilterType)
             {
                 case FilterType.Teacher:
-                    return Schedules().Where(x => x.TeacherId == filter.ID).ToList();
+                    return Schedules($"{scheduleChanger.name}*:*:*:*:{filter.ID}:*").OrderBy(x => x.Time.TimeOfDay).ToList();
                 case FilterType.Group:
-                    return Schedules().Where(x => x.GroupId == filter.ID).ToList();
+                    return Schedules($"{scheduleChanger.name}*:*:{filter.ID}:*:*").OrderBy(x => x.Time.TimeOfDay).ToList();
                 case FilterType.Lesson:
-                    return Schedules().Where(x => x.LessonId == filter.ID).ToList();
+                    return Schedules($"{scheduleChanger.name}*:*:*:*:*:{filter.ID}").OrderBy(x => x.Time.TimeOfDay).ToList();
             }
             return null;
         }
