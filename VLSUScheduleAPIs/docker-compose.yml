@@ -105,6 +105,5 @@ services:
     environment:
       WAIT_HOSTS: consul:8500, authapi:80, redis:6379
       WAIT_HOSTS_TIMEOUT: 300
-      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - '5003:80'
